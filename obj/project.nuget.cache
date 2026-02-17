@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "chfMhcZWvnpOqeTdY0FRMLMPNw0+wyGFJQHm9F4TFXbsrjwHtpjYnZ3ke/8WOxpbrlTHyaf1Y3nJO7jTIa6Yqw==",
+  "dgSpecHash": "5Q2GPPhswwfPEm9odvnYUTTG0OIG5hui5/OTXDGX0allmOA8OYlB3qlx1iUK8rNrMfchmHJ8NSq3pT5zJsQXGg==",
   "success": true,
   "projectFilePath": "/home/xush/Projects/Itransition/InventoryManager/InventoryManager.csproj",
   "expectedPackageFiles": [
     "/home/xush/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
+    "/home/xush/.nuget/packages/microsoft.aspnetcore.authentication.google/8.0.0/microsoft.aspnetcore.authentication.google.8.0.0.nupkg.sha512",
     "/home/xush/.nuget/packages/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "/home/xush/.nuget/packages/microsoft.codeanalysis.analyzers/3.3.3/microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",
     "/home/xush/.nuget/packages/microsoft.codeanalysis.common/4.5.0/microsoft.codeanalysis.common.4.5.0.nupkg.sha512",
