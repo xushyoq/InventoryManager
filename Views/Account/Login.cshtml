@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Добро пожаловать</h1>
+    <p>Для начала работы необходимо войти через Google.</p>
+
+    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+        <input type="hidden" name="provider" value="Google" />
+        <button type="submit" class="btn btn-primary btn-lg">
+            Войти через Google
+        </button>
+    </form>
+</div>

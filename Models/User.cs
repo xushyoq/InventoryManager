@@ -15,7 +15,7 @@ public class User
     public string Name { get; set; }
 
     [MaxLength(500)]
-    public string ProfileImageUrl { get; set; }
+    public string? ProfileImageUrl { get; set; }
 
     public bool IsAdmin { get; set; } = false;
     public bool IsBlcoked { get; set; } = false;

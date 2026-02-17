@@ -16,6 +16,12 @@ public class AccountController : Controller
         _context = context;
     }
 
+    [HttpGet]
+    public IActionResult Login()
+    {
+        return View();
+    }
+
     [HttpPost]
     public IActionResult ExternalLogin(string provider)
     {
