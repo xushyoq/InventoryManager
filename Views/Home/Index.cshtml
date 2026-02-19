@@ -2,7 +2,26 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        @* Сюда попадает только залогиненный пользователь*@
+        <h1 class="display-4 text-success">Вы вошли!</h1>
+        <hr />
+        <p class="lead">
+            Рад тебя видеть, <strong>@User.Identity.Name</strong>!
+        </p>
+        <p class="text-muted">Теперь ты можешь пользоваться всеми функциями системы.</p>
+    }
+    else
+    {
+        @*Это увидят все остальные (гости)*@
+        <h1 class="display-4">Добро пожаловать</h1>
+        <p class="lead">Пожалуйста, авторизуйтес для начала работы.</p>
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Login">
+                Перейти к входу
+            </a>
+        </div>
+    }
 </div>
