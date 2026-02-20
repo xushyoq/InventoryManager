@@ -8,11 +8,11 @@ public class User
 
     [Required]
     [MaxLength(255)]
-    public string Email { get; set; }
+    public string Email { get; set; } = string.Empty;
 
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [MaxLength(500)]
     public string? ProfileImageUrl { get; set; }
@@ -21,10 +21,10 @@ public class User
     public bool IsBlcoked { get; set; } = false;
 
     [MaxLength(255)]
-    public string Provider { get; set; }
+    public string Provider { get; set; } = string.Empty;
 
     [MaxLength(500)]
-    public string ProviderUserId { get; set; }
+    public string ProviderUserId { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 }

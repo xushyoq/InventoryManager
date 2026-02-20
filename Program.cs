@@ -20,11 +20,25 @@ builder.Services.AddAuthentication(options =>
 
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
-.AddCookie()
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie("External")
 .AddGoogle(options =>
 {
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]
+        ?? throw new InvalidOperationException("Google ClientId not found in configuration.");
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]
+        ?? throw new InvalidOperationException("Google ClientSecret not found in configuration.");
+    options.SignInScheme = "External";
+})
+.AddGitHub(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]
+        ?? throw new InvalidOperationException("GitHub ClientId not found.");
+    options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]
+        ?? throw new InvalidOperationException("GitHub ClientSecret not found.");
+
+    options.SignInScheme = "External";
+    options.Scope.Add("user:email");
 });
 
 var app = builder.Build();
@@ -50,4 +64,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+await app.RunAsync();

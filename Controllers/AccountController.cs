@@ -21,7 +21,7 @@ public class AccountController : Controller
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         return View();
@@ -30,37 +30,45 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult ExternalLogin(string provider)
     {
-        var properties = new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponce") };
+        var properties = new AuthenticationProperties { RedirectUri = Url.Action("ExternalLoginCallback") };
 
         return Challenge(properties, provider);
     }
 
-    public async Task<IActionResult> GoogleResponce()
+    public async Task<IActionResult> ExternalLoginCallback()
     {
-        var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+        var result = await HttpContext.AuthenticateAsync("External");
 
         if (result?.Principal == null)
         {
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         var claims = result.Principal.Claims;
         var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-        var googleId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        var imageUrl = claims.FirstOrDefault(c => c.Type == "picture")?.Value;
+        var providerId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(providerId))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+        var imageUrl = claims.FirstOrDefault(c => c.Type == "picture")?.Value
+            ?? claims.FirstOrDefault(c => c.Type == "urn:github:avatar")?.Value;
+        var providerName = result.Ticket?.AuthenticationScheme
+                        ?? result.Properties?.Items[".AuthScheme"]
+                        ?? "Unknown";
 
-        var user = _context.Users.FirstOrDefault(u => u.Provider == "Google" && u.ProviderUserId == googleId);
+        var user = _context.Users.FirstOrDefault(u => u.Provider == providerName && u.ProviderUserId == providerId);
 
         if (user == null)
         {
             user = new Models.User
             {
-                Email = email,
-                Name = name,
+                Email = email ?? $"{providerId}@auth.com",
+                Name = name ?? "NewUser",
                 ProfileImageUrl = imageUrl,
-                Provider = "Google",
-                ProviderUserId = googleId,
+                Provider = providerName,
+                ProviderUserId = providerId,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -73,16 +81,16 @@ public class AccountController : Controller
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim("ProfileImageUrl", user.ProfileImageUrl ?? "")
         };
 
         var claimsIdentity = new ClaimsIdentity(localClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties { IsPersistent = true };
 
         await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity),
-            authProperties);
+            new AuthenticationProperties { IsPersistent = true });
+
+        await HttpContext.SignOutAsync("External");
 
         return RedirectToAction("Index", "Home");
     }

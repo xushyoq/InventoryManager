@@ -1,15 +1,54 @@
+@*
+    Страница входа: центрированная карточка с кнопками социальных сетей.
+*@
 @{
-    ViewData["Title"] = "Вход";
+    ViewData["Title"] = "Вход в систему";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Добро пожаловать</h1>
-    <p>Для начала работы необходимо войти через Google.</p>
+<div class="row justify-content-center align-items-center" style="min-height: 75vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-shield-lock display-1 text-primary"></i>
+                </div>
+                
+                <h2 class="fw-bold mb-3">Добро пожаловать</h2>
+                <p class="text-muted mb-4">Выберите удобный способ авторизации для доступа к инвентарю</p>
 
-    <form asp-controller="Account" asp-action="ExternalLogin" method="post">
-        <input type="hidden" name="provider" value="Google" />
-        <button type="submit" class="btn btn-primary btn-lg">
-            Войти через Google
-        </button>
-    </form>
+                <form asp-controller="Account" asp-action="ExternalLogin" method="post" class="mb-2">
+                    <input type="hidden" name="provider" value="Google" />
+                    <button type="submit"
+                            class="btn btn-white border shadow-sm w-100 py-2 d-flex align-items-center justify-content-center rounded-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                             style="width: 18px; margin-right: 12px;" alt="G" />
+                        <span>Войти через Google</span>
+                    </button>
+                </form>
+
+                <form asp-controller="Account" asp-action="ExternalLogin" method="post">
+                    <input type="hidden" name="provider" value="GitHub" />
+                    <button type="submit"
+                            class="btn btn-dark border shadow-sm w-100 py-2 d-flex align-items-center justify-content-center rounded-3">
+                        <i class="bi bi-github fs-5 me-2"></i>
+                        <span>Войти через GitHub</span>
+                    </button>
+                </form>
+
+                <div class="mt-4">
+                    <p class="small text-muted">
+                        Нажимая на кнопку, вы соглашаетесь с правилами использования сервиса.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-light border-0 py-3 text-center">
+                <small class="text-muted">Нужна помощь? <a href="#" class="text-decoration-none">Поддержка</a></small>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    @* Если нужно добавить специфичные скрипты для страницы логина *@
+}
