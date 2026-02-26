@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Inventory> Inventories { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,5 +24,11 @@ public class AppDbContext : DbContext
             entity.Property(u => u.Provider).HasMaxLength(255);
             entity.Property(u => u.ProviderUserId).HasMaxLength(500);
         });
+
+        modelBuilder.Entity<Inventory>()
+            .HasOne(i => i.CreatedBy)
+            .WithMany(u => u.OwnedInventories)
+            .HasForeignKey(i => i.CreatedById)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
