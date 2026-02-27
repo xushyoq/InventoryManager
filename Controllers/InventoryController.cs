@@ -3,6 +3,7 @@ using InventoryManager.Data;
 using InventoryManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManager.Controllers;
@@ -33,6 +34,7 @@ public class InventoryController : Controller
     [HttpGet]
     public IActionResult Create()
     {
+        ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Elecgtronics", "Clothing" });
         return View();
     }
 
@@ -49,7 +51,7 @@ public class InventoryController : Controller
 
         inventory.CreatedById = userId;
         inventory.CreatedAt = DateTime.UtcNow;
-        inventory.CreatedAt = DateTime.UtcNow;
+        inventory.UpdatedAt = DateTime.UtcNow;
 
         _context.Inventories.Add(inventory);
         await _context.SaveChangesAsync();
@@ -57,7 +59,49 @@ public class InventoryController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public IActionResult Edit(int inventoryId)
+    {
+        var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+        if (inventory == null)
+        {
+            return NotFound();
+        }
 
+        return View(inventory);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(Inventory inventory)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(inventory);
+        }
+
+        inventory.UpdatedAt = DateTime.UtcNow;
+        _context.Inventories.Update(inventory);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(int inventoryId)
+    {
+        var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+
+        if (inventory == null)
+        {
+            return NotFound();
+        }
+
+        _context.Inventories.Remove(inventory);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
 
 
 }
