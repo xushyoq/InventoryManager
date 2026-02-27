@@ -1,13 +1,69 @@
 @model InventoryManager.Models.Inventory
 
-<h2>Создать инвентарь</h2>
+@{
+    ViewData["Title"] = "Создать инвентарь";
+}
 
-<form asp-action="Create" method="post">
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="d-flex align-items-center mb-4">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h2 class="fw-bold mb-0">Новый инвентарь</h2>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-medium">Название</label>
+                            <input asp-for="Name" class="form-control" placeholder="Например: Домашняя электроника" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-medium">Описание</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"
+                                      placeholder="Описание инвентаря..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Category" class="form-label fw-medium">Категория</label>
+                            <select asp-for="Category" asp-items="ViewBag.Categories" class="form-select">
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsPublic" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="IsPublic" class="form-check-label">Публичный инвентарь</label>
+                            </div>
+                            <small class="text-muted">Публичный инвентарь виден другим пользователям</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                <i class="bi bi-plus-lg me-1"></i> Создать
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Отмена</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
     </div>
+</div>
 
-    <button type="submit">Создать</button>
-</form>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
