@@ -105,3 +105,4 @@
 /home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/InventoryManager.genruntimeconfig.cache
 /home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/ref/InventoryManager.dll
 /home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/AspNet.Security.OAuth.GitHub.dll
+/home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/appsettings.Production.json
