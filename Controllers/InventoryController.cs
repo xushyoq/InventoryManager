@@ -34,7 +34,7 @@ public class InventoryController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Elecgtronics", "Clothing" });
+        ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
         return View();
     }
 
@@ -68,6 +68,8 @@ public class InventoryController : Controller
             return NotFound();
         }
 
+        ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
+
         return View(inventory);
     }
 
@@ -80,6 +82,7 @@ public class InventoryController : Controller
         }
 
         inventory.UpdatedAt = DateTime.UtcNow;
+        inventory.CreatedAt = DateTime.SpecifyKind(inventory.CreatedAt, DateTimeKind.Utc);
         _context.Inventories.Update(inventory);
         await _context.SaveChangesAsync();
 
@@ -88,16 +91,11 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete(int inventoryId)
+    public async Task<IActionResult> Delete(int[] inventoryIds)
     {
-        var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+        var inventories = _context.Inventories.Where(i => inventoryIds.Contains(i.Id));
 
-        if (inventory == null)
-        {
-            return NotFound();
-        }
-
-        _context.Inventories.Remove(inventory);
+        _context.Inventories.RemoveRange(inventories);
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));

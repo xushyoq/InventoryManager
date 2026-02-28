@@ -6,80 +6,171 @@
 
 <div class="container py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold mb-0">Мои инвентари</h2>
+    </div>
+
+    <!-- Тулбар -->
+    <div class="d-flex align-items-center gap-2 mb-3">
         <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
-            <i class="bi bi-plus-lg me-1"></i> Создать инвентарь
+            <i class="bi bi-plus-lg me-1"></i> Создать
         </a>
+
+        <button type="button" id="btnEdit" class="btn btn-outline-secondary rounded-pill px-4" disabled
+                onclick="editSelected()">
+            <i class="bi bi-pencil me-1"></i> Изменить
+        </button>
+
+        <button type="button" id="btnDelete" class="btn btn-outline-danger rounded-pill px-4" disabled
+                data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+        </button>
     </div>
 
     @if (!Model.Any())
     {
         <div class="text-center py-5">
-            <div class="mb-3">
-                <i class="bi bi-inbox display-1 text-muted"></i>
-            </div>
-            <h5 class="text-muted">У вас пока нет инвентарей</h5>
-            <p class="text-muted small">Нажмите "Создать инвентарь" чтобы начать</p>
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">У вас пока нет инвентарей</h5>
+            <p class="text-muted small">Нажмите "Создать" чтобы начать</p>
         </div>
     }
     else
     {
-        <div class="row g-4">
-            @foreach (var inventory in Model)
-            {
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title fw-bold mb-0">@inventory.Name</h5>
-                                @if (inventory.IsPublic)
-                                {
-                                    <span class="badge bg-success-subtle text-success rounded-pill">
-                                        <i class="bi bi-globe me-1"></i>Публичный
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input" />
+                            </th>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th>Описание</th>
+                            <th>Создано</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var inventory in Model)
+                        {
+                            <tr class="inventory-row" style="cursor: pointer;" data-id="@inventory.Id"
+                                data-edit-url="@Url.Action("Edit", new { inventoryId = inventory.Id })">
+                                <td onclick="event.stopPropagation()">
+                                    <input type="checkbox" class="form-check-input row-checkbox" value="@inventory.Id" />
+                                </td>
+                                <td class="fw-medium">@inventory.Name</td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                        @inventory.Category
                                     </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">
-                                        <i class="bi bi-lock me-1"></i>Приватный
-                                    </span>
-                                }
-                            </div>
-
-                            <span class="badge bg-primary-subtle text-primary rounded-pill mb-2">
-                                <i class="bi bi-tag me-1"></i>@inventory.Category
-                            </span>
-
-                            @if (!string.IsNullOrEmpty(inventory.Description))
-                            {
-                                <p class="card-text text-muted small">@inventory.Description</p>
-                            }
-
-                            <p class="text-muted small mt-2 mb-0">
-                                <i class="bi bi-clock me-1"></i>@inventory.CreatedAt.ToString("dd.MM.yyyy")
-                            </p>
-                        </div>
-
-                        <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
-                            <div class="d-flex gap-2">
-                                <a asp-action="Edit" asp-route-inventoryId="@inventory.Id"
-                                       class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                    <i class="bi bi-pencil me-1"></i>Изменить
-                                </a>
-                                <form asp-action="Delete" method="post" class="d-inline">
-                                    <input type="hidden" name="inventoryId" value="@inventory.Id" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                            onclick="return confirm('Удалить инвентарь?')">
-                                        <i class="bi bi-trash me-1"></i>Удалить
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+                                </td>
+                                <td class="text-muted small">
+                                    @(inventory.Description?.Length > 50
+                                        ? inventory.Description.Substring(0, 50) + "..."
+                                        : inventory.Description ?? "—")
+                                </td>
+                                <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    @if (inventory.IsPublic)
+                                    {
+                                        <span class="badge bg-success-subtle text-success rounded-pill">
+                                            <i class="bi bi-globe me-1"></i>Публичный
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                            <i class="bi bi-lock me-1"></i>Приватный
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 
 </div>
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText" class="text-muted"></p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">Отмена</button>
+                <form asp-action="Delete" method="post" id="deleteForm">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('selectAll').addEventListener('change', function () {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
+            updateToolbar();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateToolbar);
+        });
+
+        document.querySelectorAll('.inventory-row').forEach(row => {
+            row.addEventListener('click', function () {
+                window.location.href = this.dataset.editUrl;
+            });
+        });
+
+        function getSelected() {
+            return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
+        }
+
+        function updateToolbar() {
+            const selected = getSelected();
+            const count = selected.length;
+            document.getElementById('btnEdit').disabled = count !== 1;
+            document.getElementById('btnDelete').disabled = count === 0;
+            document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+        }
+
+        function editSelected() {
+            const selected = getSelected();
+            if (selected.length === 1) {
+                const row = document.querySelector(`.row-checkbox[value="${selected[0]}"]`).closest('tr');
+                window.location.href = row.dataset.editUrl;
+            }
+        }
+
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function () {
+            const selected = getSelected();
+            const form = document.getElementById('deleteForm');
+
+            form.querySelectorAll('input[name="inventoryIds"]').forEach(el => el.remove());
+
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'inventoryIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            document.getElementById('deleteConfirmText').textContent =
+                `Вы уверены что хотите удалить ${selected.length} инвентар${selected.length === 1 ? 'ь' : 'я'}?`;
+        });
+    </script>
+}
