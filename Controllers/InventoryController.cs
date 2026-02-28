@@ -43,7 +43,8 @@ public class InventoryController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View(inventory);
+            ViewBag.Inventory = inventory;
+            return View();
         }
 
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -118,9 +119,9 @@ public class InventoryController : Controller
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userId = int.Parse(userIdString);
 
-        var IsAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
+        var isAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
 
-        return inventory.CreatedById == userId || IsAdmin;
+        return inventory.CreatedById == userId || isAdmin;
     }
 
 }

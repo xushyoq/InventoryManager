@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace InventoryManager.Models
 {
@@ -80,6 +81,6 @@ namespace InventoryManager.Models
         public string? CustomLink3Name { get; set; }
 
         // Navigation
-
+        public ICollection<Item> Items { get; set; } = new List<Item>();
     }
 }

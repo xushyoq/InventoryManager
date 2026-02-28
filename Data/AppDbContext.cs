@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Inventory> Inventories { get; set; } = null!;
+    public DbSet<Item> Items { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,5 +31,18 @@ public class AppDbContext : DbContext
             .WithMany(u => u.OwnedInventories)
             .HasForeignKey(i => i.CreatedById)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Item>()
+            .HasOne(it => it.Inventory)
+            .WithMany(inv => inv.Items)
+            .HasForeignKey(it => it.InventoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Item>()
+            .HasOne(it => it.CreatedBy)
+            .WithMany(u => u.CreatedItems)
+            .HasForeignKey(it => it.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

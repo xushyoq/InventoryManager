@@ -28,5 +28,6 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Inventory> OwnedInventories { get; set; } = new List<Inventory>();
+    public ICollection<Item> CreatedItems { get; set; } = new List<Item>();
 
 }
