@@ -1,7 +1,10 @@
+@using System.Security.Claims
 @model IEnumerable<InventoryManager.Models.Inventory>
 
 @{
     ViewData["Title"] = "Мои инвентари";
+    var isAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 }
 
 <div class="container py-4">

@@ -54,9 +54,9 @@ public class AccountController : Controller
         }
         var imageUrl = claims.FirstOrDefault(c => c.Type == "picture")?.Value
             ?? claims.FirstOrDefault(c => c.Type == "urn:github:avatar")?.Value;
-        var providerName = result.Ticket?.AuthenticationScheme
-                        ?? result.Properties?.Items[".AuthScheme"]
-                        ?? "Unknown";
+        var providerName = result.Properties?.Items[".AuthScheme"]
+            ?? result.Ticket?.AuthenticationScheme
+            ?? "Unknown";
 
         var user = _context.Users.FirstOrDefault(u => u.Provider == providerName && u.ProviderUserId == providerId);
 
@@ -81,6 +81,7 @@ public class AccountController : Controller
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
+            new Claim("IsAdmin", user.IsAdmin.ToString())
         };
 
         var claimsIdentity = new ClaimsIdentity(localClaims, CookieAuthenticationDefaults.AuthenticationScheme);

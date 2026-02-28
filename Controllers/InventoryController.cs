@@ -62,10 +62,17 @@ public class InventoryController : Controller
     [HttpGet]
     public IActionResult Edit(int inventoryId)
     {
+
         var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+
         if (inventory == null)
         {
             return NotFound();
+        }
+
+        if (!CanEditInventory(inventory))
+        {
+            return RedirectToAction(nameof(Index));
         }
 
         ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
@@ -95,11 +102,25 @@ public class InventoryController : Controller
     {
         var inventories = _context.Inventories.Where(i => inventoryIds.Contains(i.Id));
 
+        if (inventories.Any(i => !CanEditInventory(i)))
+        {
+            return Forbid();
+        }
+
         _context.Inventories.RemoveRange(inventories);
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }
 
+    private bool CanEditInventory(Inventory inventory)
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = int.Parse(userIdString);
+
+        var IsAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
+
+        return inventory.CreatedById == userId || IsAdmin;
+    }
 
 }
