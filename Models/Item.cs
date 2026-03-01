@@ -6,7 +6,7 @@ public class Item
 {
     public int Id { get; set; }
     public int InventoryId { get; set; }
-    public Inventory Inventory { get; set; }
+    public Inventory? Inventory { get; set; }
 
 
     [Required]
@@ -44,7 +44,7 @@ public class Item
 
 
     public int CreatedById { get; set; }
-    public User CreatedBy { get; set; }
+    public User? CreatedBy { get; set; }
 
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

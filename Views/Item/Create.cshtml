@@ -1,0 +1,169 @@
+@model int
+@{
+    ViewData["Title"] = "Добавить предмет";
+    var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
+}
+
+@if (ViewBag.Errors != null)
+{
+    <div class="alert alert-danger">@ViewBag.Errors</div>
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="d-flex align-items-center mb-4">
+                <a asp-controller="Item" asp-action="Index" asp-route-inventoryId="@inventory.Id"
+                       class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h2 class="fw-bold mb-0">Добавить предмет в "@inventory.Name"</h2>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-controller="Item" asp-action="Create" asp-route-inventoryId="@inventory.Id" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">ID предмета <span class="text-danger">*</span></label>
+                            <input name="CustomId" class="form-control" required
+                                   placeholder="Уникальный идентификатор" />
+                        </div>
+
+                        @* String fields *@
+                        @if (inventory.CustomString1State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomString1Name</label>
+                                <input name="CustomString1" class="form-control" />
+                            </div>
+                        }
+                        @if (inventory.CustomString2State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomString2Name</label>
+                                <input name="CustomString2" class="form-control" />
+                            </div>
+                        }
+                        @if (inventory.CustomString3State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomString3Name</label>
+                                <input name="CustomString3" class="form-control" />
+                            </div>
+                        }
+
+                        @* Text fields *@
+                        @if (inventory.CustomText1State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomText1Name</label>
+                                <textarea name="CustomText1" class="form-control" rows="3"></textarea>
+                            </div>
+                        }
+                        @if (inventory.CustomText2State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomText2Name</label>
+                                <textarea name="CustomText2" class="form-control" rows="3"></textarea>
+                            </div>
+                        }
+                        @if (inventory.CustomText3State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomText3Name</label>
+                                <textarea name="CustomText3" class="form-control" rows="3"></textarea>
+                            </div>
+                        }
+
+                        @* Number fields *@
+                        @if (inventory.CustomInt1State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomInt1Name</label>
+                                <input name="CustomInt1" type="number" step="0.01" class="form-control" />
+                            </div>
+                        }
+                        @if (inventory.CustomInt2State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomInt2Name</label>
+                                <input name="CustomInt2" type="number" step="0.01" class="form-control" />
+                            </div>
+                        }
+                        @if (inventory.CustomInt3State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomInt3Name</label>
+                                <input name="CustomInt3" type="number" step="0.01" class="form-control" />
+                            </div>
+                        }
+
+                        @* Bool fields *@
+                        @if (inventory.CustomBool1State)
+                        {
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input name="CustomBool1" type="checkbox" class="form-check-input" role="switch" />
+                                    <label class="form-check-label">@inventory.CustomBool1Name</label>
+                                </div>
+                            </div>
+                        }
+                        @if (inventory.CustomBool2State)
+                        {
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input name="CustomBool2" type="checkbox" class="form-check-input" role="switch" />
+                                    <label class="form-check-label">@inventory.CustomBool2Name</label>
+                                </div>
+                            </div>
+                        }
+                        @if (inventory.CustomBool3State)
+                        {
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input name="CustomBool3" type="checkbox" class="form-check-input" role="switch" />
+                                    <label class="form-check-label">@inventory.CustomBool3Name</label>
+                                </div>
+                            </div>
+                        }
+
+                        @* Link fields *@
+                        @if (inventory.CustomLink1State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomLink1Name</label>
+                                <input name="CustomLink1" type="url" class="form-control" placeholder="https://" />
+                            </div>
+                        }
+                        @if (inventory.CustomLink2State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomLink2Name</label>
+                                <input name="CustomLink2" type="url" class="form-control" placeholder="https://" />
+                            </div>
+                        }
+                        @if (inventory.CustomLink3State)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">@inventory.CustomLink3Name</label>
+                                <input name="CustomLink3" type="url" class="form-control" placeholder="https://" />
+                            </div>
+                        }
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                <i class="bi bi-plus-lg me-1"></i> Добавить
+                            </button>
+                            <a asp-controller="Item" asp-action="Index" asp-route-inventoryId="@inventory.Id"
+                               class="btn btn-outline-secondary rounded-pill px-4">Отмена</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

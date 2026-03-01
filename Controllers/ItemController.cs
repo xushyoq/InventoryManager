@@ -26,6 +26,11 @@ public class ItemController : Controller
             return NotFound();
         }
 
+        if (!CanEditInventory(inventory))
+        {
+            return Forbid();
+        }
+
         var items = await _context.Items
             .Where(i => i.InventoryId == inventoryId)
             .OrderByDescending(i => i.CreatedAt)
@@ -46,6 +51,11 @@ public class ItemController : Controller
             return NotFound();
         }
 
+        if (!CanEditInventory(inventory))
+        {
+            return Forbid();
+        }
+
         ViewBag.Inventory = inventory;
 
         return View(inventoryId);
@@ -58,7 +68,8 @@ public class ItemController : Controller
 
         if (!ModelState.IsValid)
         {
-            return View(inventory);
+            ViewBag.Inventory = inventory;
+            return View();
         }
 
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -134,9 +145,21 @@ public class ItemController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int[] itemIds)
     {
-        var items = _context.Items.Where(i => itemIds.Contains(i.Id));
 
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == items.First().InventoryId);
+        if (itemIds.Length == 0 || itemIds == null)
+        {
+            return BadRequest();
+        }
+
+        var itemsToDelete = await _context.Items.Where(i => itemIds.Contains(i.Id)).ToListAsync();
+
+        if (!itemsToDelete.Any())
+        {
+            return NotFound();
+        }
+
+        var inventoryId = itemsToDelete.First().InventoryId;
+        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
 
         if (inventory == null)
         {
@@ -148,7 +171,7 @@ public class ItemController : Controller
             return Forbid();
         }
 
-        _context.RemoveRange(items);
+        _context.RemoveRange(itemsToDelete);
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });

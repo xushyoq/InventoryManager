@@ -58,7 +58,8 @@
                     <tbody>
                         @foreach (var inventory in Model)
                         {
-                            <tr class="inventory-row" style="cursor: pointer;" data-id="@inventory.Id"
+                            <tr class="inventory-row" style="cursor: pointer;" data-id="@inventory.Id" data-id="@inventory.Id"
+                                data-details-url="@Url.Action("Details", new { inventoryId = inventory.Id })"
                                 data-edit-url="@Url.Action("Edit", new { inventoryId = inventory.Id })">
                                 <td onclick="event.stopPropagation()">
                                     <input type="checkbox" class="form-check-input row-checkbox" value="@inventory.Id" />
@@ -134,7 +135,7 @@
 
         document.querySelectorAll('.inventory-row').forEach(row => {
             row.addEventListener('click', function () {
-                window.location.href = this.dataset.editUrl;
+                window.location.href = this.dataset.detailsUrl;
             });
         });
 

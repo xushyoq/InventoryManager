@@ -1,0 +1,265 @@
+@model IEnumerable<InventoryManager.Models.Item>
+@{
+    ViewData["Title"] = "Айтемы";
+    var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
+}
+
+<div class="container py-4">
+
+    <div class="d-flex align-items-center mb-3">
+        <a asp-controller="Inventory" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h2 class="fw-bold mb-0">@inventory.Name</h2>
+    </div>
+
+    <!-- Тулбар -->
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <a asp-controller="Item" asp-action="Create" asp-route-inventoryId="@inventory.Id"
+               class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-plus-lg me-1"></i> Добавить
+        </a>
+        <button type="button" id="btnEdit" class="btn btn-outline-secondary rounded-pill px-4" disabled
+                onclick="editSelected()">
+            <i class="bi bi-pencil me-1"></i> Изменить
+        </button>
+        <button type="button" id="btnDelete" class="btn btn-outline-danger rounded-pill px-4" disabled
+                data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+        </button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Нет предметов</h5>
+            <p class="text-muted small">Нажмите "Добавить" чтобы начать</p>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input" />
+                            </th>
+                            <th>ID</th>
+                            @if (inventory.CustomString1State)
+                            {
+                                <th>@inventory.CustomString1Name</th>
+                            }
+                            @if (inventory.CustomString2State)
+                            {
+                                <th>@inventory.CustomString2Name</th>
+                            }
+                            @if (inventory.CustomString3State)
+                            {
+                                <th>@inventory.CustomString3Name</th>
+                            }
+                            @if (inventory.CustomText1State)
+                            {
+                                <th>@inventory.CustomText1Name</th>
+                            }
+                            @if (inventory.CustomText2State)
+                            {
+                                <th>@inventory.CustomText2Name</th>
+                            }
+                            @if (inventory.CustomText3State)
+                            {
+                                <th>@inventory.CustomText3Name</th>
+                            }
+                            @if (inventory.CustomInt1State)
+                            {
+                                <th>@inventory.CustomInt1Name</th>
+                            }
+                            @if (inventory.CustomInt2State)
+                            {
+                                <th>@inventory.CustomInt2Name</th>
+                            }
+                            @if (inventory.CustomInt3State)
+                            {
+                                <th>@inventory.CustomInt3Name</th>
+                            }
+                            @if (inventory.CustomBool1State)
+                            {
+                                <th>@inventory.CustomBool1Name</th>
+                            }
+                            @if (inventory.CustomBool2State)
+                            {
+                                <th>@inventory.CustomBool2Name</th>
+                            }
+                            @if (inventory.CustomBool3State)
+                            {
+                                <th>@inventory.CustomBool3Name</th>
+                            }
+                            @if (inventory.CustomLink1State)
+                            {
+                                <th>@inventory.CustomLink1Name</th>
+                            }
+                            @if (inventory.CustomLink2State)
+                            {
+                                <th>@inventory.CustomLink2Name</th>
+                            }
+                            @if (inventory.CustomLink3State)
+                            {
+                                <th>@inventory.CustomLink3Name</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="item-row" style="cursor: pointer;" data-id="@item.Id"
+                                data-edit-url="@Url.Action("Edit", "Item", new { itemId = item.Id })">
+                                <td onclick="event.stopPropagation()">
+                                    <input type="checkbox" class="form-check-input row-checkbox" value="@item.Id" />
+                                </td>
+                                <td class="fw-medium">@item.CustomId</td>
+                                @if (inventory.CustomString1State)
+                                {
+                                    <td>@item.CustomString1</td>
+                                }
+                                @if (inventory.CustomString2State)
+                                {
+                                    <td>@item.CustomString2</td>
+                                }
+                                @if (inventory.CustomString3State)
+                                {
+                                    <td>@item.CustomString3</td>
+                                }
+                                @if (inventory.CustomText1State)
+                                {
+                                    <td>@item.CustomText1</td>
+                                }
+                                @if (inventory.CustomText2State)
+                                {
+                                    <td>@item.CustomText2</td>
+                                }
+                                @if (inventory.CustomText3State)
+                                {
+                                    <td>@item.CustomText3</td>
+                                }
+                                @if (inventory.CustomInt1State)
+                                {
+                                    <td>@item.CustomInt1</td>
+                                }
+                                @if (inventory.CustomInt2State)
+                                {
+                                    <td>@item.CustomInt2</td>
+                                }
+                                @if (inventory.CustomInt3State)
+                                {
+                                    <td>@item.CustomInt3</td>
+                                }
+                                @if (inventory.CustomBool1State)
+                                {
+                                    <td>@(item.CustomBool1 == true ? "Да" : "Нет")</td>
+                                }
+                                @if (inventory.CustomBool2State)
+                                {
+                                    <td>@(item.CustomBool2 == true ? "Да" : "Нет")</td>
+                                }
+                                @if (inventory.CustomBool3State)
+                                {
+                                    <td>@(item.CustomBool3 == true ? "Да" : "Нет")</td>
+                                }
+                                @if (inventory.CustomLink1State)
+                                {
+                                    <td><a href="@item.CustomLink1" target="_blank">@item.CustomLink1</a></td>
+                                }
+                                @if (inventory.CustomLink2State)
+                                {
+                                    <td><a href="@item.CustomLink2" target="_blank">@item.CustomLink2</a></td>
+                                }
+                                @if (inventory.CustomLink3State)
+                                {
+                                    <td><a href="@item.CustomLink3" target="_blank">@item.CustomLink3</a></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText" class="text-muted"></p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">Отмена</button>
+                <form asp-controller="Item" asp-action="Delete" method="post" id="deleteForm">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('selectAll').addEventListener('change', function () {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
+            updateToolbar();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateToolbar);
+        });
+
+        document.querySelectorAll('.item-row').forEach(row => {
+            row.addEventListener('click', function () {
+                window.location.href = this.dataset.editUrl;
+            });
+        });
+
+        function getSelected() {
+            return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
+        }
+
+        function updateToolbar() {
+            const selected = getSelected();
+            const count = selected.length;
+            document.getElementById('btnEdit').disabled = count !== 1;
+            document.getElementById('btnDelete').disabled = count === 0;
+            document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+        }
+
+        function editSelected() {
+            const selected = getSelected();
+            if (selected.length === 1) {
+                const row = document.querySelector(`.row-checkbox[value="${selected[0]}"]`).closest('tr');
+                window.location.href = row.dataset.editUrl;
+            }
+        }
+
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function () {
+            const selected = getSelected();
+            const form = document.getElementById('deleteForm');
+            form.querySelectorAll('input[name="itemIds"]').forEach(el => el.remove());
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'itemIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            document.getElementById('deleteConfirmText').textContent =
+                `Вы уверены что хотите удалить ${selected.length} предмет${selected.length === 1 ? '' : 'а'}?`;
+        });
+    </script>
+}

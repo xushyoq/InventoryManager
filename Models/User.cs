@@ -18,7 +18,7 @@ public class User
     public string? ProfileImageUrl { get; set; }
 
     public bool IsAdmin { get; set; } = false;
-    public bool IsBlcoked { get; set; } = false;
+    public bool IsBlocked { get; set; } = false;
 
     [MaxLength(255)]
     public string Provider { get; set; } = string.Empty;
