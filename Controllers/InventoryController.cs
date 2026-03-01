@@ -135,20 +135,6 @@ public class InventoryController : Controller
         return View(items);
     }
 
-    [AllowAnonymous]
-    [HttpGet]
-    public async Task<IActionResult> PublicInventories()
-    {
-        var inventories = await _context.Inventories
-            .AsNoTracking()
-            .Where(i => i.IsPublic)
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync();
-
-        return View(inventories);
-
-    }
-
     private bool CanEditInventory(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);

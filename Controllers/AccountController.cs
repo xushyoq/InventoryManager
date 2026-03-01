@@ -41,7 +41,7 @@ public class AccountController : Controller
 
         if (result?.Principal == null)
         {
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         var claims = result.Principal.Claims;

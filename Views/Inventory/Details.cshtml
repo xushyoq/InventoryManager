@@ -3,19 +3,27 @@
 @{
     ViewData["Title"] = "Детали инвентаря";
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
-    var isAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
+
+    var isAdminClaim = User.FindFirstValue("IsAdmin");
+    var isAdmin = !string.IsNullOrEmpty(isAdminClaim) && Convert.ToBoolean(isAdminClaim);
+
     var userIdString = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
-    var userId = userIdString != null ? int.Parse(userIdString) : 0;
-    var canEdit = isAdmin || inventory.CreatedById == userId;
+    var userId = 0;
+    if (!string.IsNullOrEmpty(userIdString))
+    {
+        userId = int.Parse(userIdString);
+    }
+    
+    var canEdit = isAdmin || (inventory != null && inventory.CreatedById == userId);
 }
 
 <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center">
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+            <button onclick="history.back()" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
                 <i class="bi bi-arrow-left"></i>
-            </a>
+            </button>
             <div>
                 <h2 class="fw-bold mb-0">@inventory.Name</h2>
                 <span class="badge bg-primary-subtle text-primary rounded-pill">@inventory.Category</span>

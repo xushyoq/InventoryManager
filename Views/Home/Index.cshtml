@@ -1,84 +1,155 @@
-﻿@{
-    ViewData["Title"] = "Панель управления";
+@using InventoryManager.Models
+@{
+    ViewData["Title"] = "Главная";
+    var latestInventories = ViewBag.LatestInventories as List<Inventory> ?? new List<Inventory>();
+    var popularInventories = ViewBag.PopularInventories as List<Inventory> ?? new List<Inventory>();
 }
 
 <div class="container py-4">
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <div class="p-5 mb-4 bg-light rounded-3 shadow-sm border-0"
-             style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-            <div class="container-fluid py-3">
-                <h1 class="display-5 fw-bold text-dark">С возвращением, @User.Identity.Name! 👋</h1>
-                <p class="col-md-8 fs-4 text-muted">Ваш инвентарь под контролем. Просматривайте, добавляйте и управляйте
-                    вещами в одном месте.</p>
-                    <button class="btn btn-primary btn-lg rounded-pill px-4" type="button">
-                        <i class="bi bi-plus-lg"></i> Добавить предмет
-                    </button>
-                </div>
+
+    <div class="row g-4">
+
+        <!-- Последние инвентари -->
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Последние инвентари
+                </h4>
             </div>
 
-            <div class="row g-4 mt-2">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="bi bi-box text-primary fs-3"></i>
-                                </div>
-                                <h5 class="card-title mb-0">Всего предметов</h5>
-                            </div>
-                            <h2 class="fw-bold">0</h2>
-                            <p class="text-muted small">Начните наполнять ваш склад</p>
-                        </div>
+            @if (!latestInventories.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-inbox display-4"></i>
+                    <p class="mt-2">Пока нет инвентарей</p>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                    <th>Категория</th>
+                                    <th>Автор</th>
+                                    <th>Создано</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var inventory in latestInventories)
+                                {
+                                    <tr class="inventory-row" style="cursor: pointer;"
+                                        data-details-url="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })">
+                                        <td class="fw-medium">@inventory.Name</td>
+                                        <td class="text-muted small">
+                                            @(inventory.Description?.Length > 60
+                                                ? inventory.Description.Substring(0, 60) + "..."
+                                                : inventory.Description ?? "—")
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                                @inventory.Category
+                                            </span>
+                                        </td>
+                                        <td class="text-muted small">@inventory.CreatedById</td>
+                                        <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            }
+        </div>
 
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-success bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="bi bi-tags text-success fs-3"></i>
-                                </div>
-                                <h5 class="card-title mb-0">Категории</h5>
-                            </div>
-                            <h2 class="fw-bold">0</h2>
-                            <p class="text-muted small">Группируйте вещи по типам</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Популярные инвентари -->
+        <div class="col-12 mt-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-fire me-2 text-danger"></i>Топ-5 популярных инвентарей
+                </h4>
+            </div>
 
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-warning bg-opacity-10 p-3 rounded-3 me-3">
-                                    <i class="bi bi-clock-history text-warning fs-3"></i>
-                                </div>
-                                <h5 class="card-title mb-0">Последние действия</h5>
-                            </div>
-                            <p class="text-muted">История активности пока пуста</p>
-                        </div>
+            @if (!popularInventories.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-bar-chart display-4"></i>
+                    <p class="mt-2">Пока нет данных</p>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                    <th>Категория</th>
+                                    <th>Предметов</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int rank = 1; }
+                                @foreach (var inventory in popularInventories)
+                                {
+                                    <tr class="inventory-row" style="cursor: pointer;"
+                                        data-details-url="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })">
+                                        <td class="fw-bold text-muted">@rank</td>
+                                        <td class="fw-medium">@inventory.Name</td>
+                                        <td class="text-muted small">
+                                            @(inventory.Description?.Length > 60
+                                                ? inventory.Description.Substring(0, 60) + "..."
+                                                : inventory.Description ?? "—")
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                                @inventory.Category
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success-subtle text-success rounded-pill">
+                                                @inventory.Items.Count
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    rank++;
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            }
+        </div>
+
+        <!-- Облако тегов (пока пустое, заполнится когда добавим теги) -->
+        <div class="col-12 mt-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-tags me-2 text-success"></i>Теги
+                </h4>
             </div>
-        }
-    else
-        {
-            <div class="text-center py-5 mt-5">
-                <div class="mb-4">
-                    <i class="bi bi-safe2 display-1 text-primary"></i>
-                </div>
-                <h1 class="display-3 fw-bold">Inventory Manager</h1>
-                <p class="lead text-muted mb-4">Умный способ вести учет ваших вещей и оборудования.</p>
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
-                        Начать работу
-                    </a>
-                    <a href="#" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">
-                        Узнать больше
-                    </a>
-                </div>
+            <div class="card border-0 shadow-sm p-4">
+                <p class="text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>Теги появятся здесь после их добавления к инвентарям.
+                </p>
             </div>
-        }
+        </div>
+
     </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.inventory-row').forEach(row => {
+            row.addEventListener('click', function () {
+                window.location.href = this.dataset.detailsUrl;
+            });
+        });
+    </script>
+}
