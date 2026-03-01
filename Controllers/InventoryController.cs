@@ -114,6 +114,41 @@ public class InventoryController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Details(int inventoryId)
+    {
+        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
+
+        if (inventory == null)
+        {
+            return NotFound();
+        }
+
+        var items = await _context.Items
+            .Where(i => i.InventoryId == inventoryId)
+            .OrderByDescending(i => i.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.Inventory = inventory;
+
+        return View(items);
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> PublicInventories()
+    {
+        var inventories = await _context.Inventories
+            .AsNoTracking()
+            .Where(i => i.IsPublic)
+            .OrderByDescending(i => i.CreatedAt)
+            .ToListAsync();
+
+        return View(inventories);
+
+    }
+
     private bool CanEditInventory(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
