@@ -26,9 +26,9 @@ public class Item
     public string? CustomText2 { get; set; }
     public string? CustomText3 { get; set; }
 
-    public int CustomInt1 { get; set; }
-    public int CustomInt2 { get; set; }
-    public int CustomInt3 { get; set; }
+    public int? CustomInt1 { get; set; }
+    public int? CustomInt2 { get; set; }
+    public int? CustomInt3 { get; set; }
 
     public bool CustomBool1 { get; set; }
     public bool CustomBool2 { get; set; }
@@ -49,6 +49,7 @@ public class Item
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    [ConcurrencyCheck]
     public int Version { get; set; } = 0;
 
     //public ICollection<Like> Likes { get; set; } = new List<Like>();
