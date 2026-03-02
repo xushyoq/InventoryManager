@@ -3,6 +3,7 @@ using System;
 using InventoryManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InventoryManager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260301210316_AddCustomFieldDescriptionAndShowInTable")]
+    partial class AddCustomFieldDescriptionAndShowInTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,13 +280,13 @@ namespace InventoryManager.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int?>("CustomInt1")
+                    b.Property<int>("CustomInt1")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CustomInt2")
+                    b.Property<int>("CustomInt2")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CustomInt3")
+                    b.Property<int>("CustomInt3")
                         .HasColumnType("integer");
 
                     b.Property<string>("CustomLink1")
