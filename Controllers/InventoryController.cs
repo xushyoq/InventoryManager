@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using InventoryManager.Data;
 using InventoryManager.Models;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace InventoryManager.Controllers;
 
@@ -86,13 +88,27 @@ public class InventoryController : Controller
     {
         if (!ModelState.IsValid)
         {
+            ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
             return View(inventory);
         }
 
         inventory.UpdatedAt = DateTime.UtcNow;
         inventory.CreatedAt = DateTime.SpecifyKind(inventory.CreatedAt, DateTimeKind.Utc);
+
         _context.Inventories.Update(inventory);
-        await _context.SaveChangesAsync();
+
+        inventory.Version++;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            ModelState.AddModelError("", "Данные были изменены другим пользователем. Обновите страницу и попробуйте снова.");
+            ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
+            return View(inventory);
+        }
 
         return RedirectToAction(nameof(Index));
 

@@ -69,7 +69,7 @@ public class ItemController : Controller
         if (!ModelState.IsValid)
         {
             ViewBag.Inventory = inventory;
-            return View();
+            return View(inventoryId);
         }
 
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -117,16 +117,17 @@ public class ItemController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(Item item)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(item);
-        }
-
         var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == item.InventoryId);
 
         if (inventory == null)
         {
             return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Inventory = inventory;
+            return View(item);
         }
 
         if (!CanEditInventory(inventory))
@@ -137,7 +138,20 @@ public class ItemController : Controller
         item.CreatedAt = DateTime.SpecifyKind(item.CreatedAt, DateTimeKind.Utc);
 
         _context.Update(item);
-        await _context.SaveChangesAsync();
+
+        item.Version++;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            ModelState.AddModelError("", "Данные были изменены другим пользователем. Обновите страницу и попробуйте снова.");
+            ViewBag.Inventory = inventory;
+            return View(item);
+        }
+
 
         return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
     }
@@ -146,7 +160,7 @@ public class ItemController : Controller
     public async Task<IActionResult> Delete(int[] itemIds)
     {
 
-        if (itemIds.Length == 0 || itemIds == null)
+        if (itemIds == null || itemIds.Length == 0)
         {
             return BadRequest();
         }
