@@ -36,21 +36,33 @@
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomString1Name</label>
-                                <input name="CustomString1" class="form-control" />
+                                <input name="CustomString1" class="form-control" placeholder="@inventory.CustomString1Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomString1Description))
+                                {
+                                    <div class="form-text">@inventory.CustomString1Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomString2State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomString2Name</label>
-                                <input name="CustomString2" class="form-control" />
+                                <input name="CustomString2" class="form-control" placeholder="@inventory.CustomString2Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomString2Description))
+                                {
+                                    <div class="form-text">@inventory.CustomString2Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomString3State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomString3Name</label>
-                                <input name="CustomString3" class="form-control" />
+                                <input name="CustomString3" class="form-control" placeholder="@inventory.CustomString3Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomString3Description))
+                                {
+                                    <div class="form-text">@inventory.CustomString3Description</div>
+                                }
                             </div>
                         }
 
@@ -59,21 +71,33 @@
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomText1Name</label>
-                                <textarea name="CustomText1" class="form-control" rows="3"></textarea>
+                                <textarea name="CustomText1" class="form-control" rows="3" placeholder="@inventory.CustomText1Description"></textarea>
+                                @if (!string.IsNullOrEmpty(inventory.CustomText1Description))
+                                {
+                                    <div class="form-text">@inventory.CustomText1Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomText2State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomText2Name</label>
-                                <textarea name="CustomText2" class="form-control" rows="3"></textarea>
+                                <textarea name="CustomText2" class="form-control" rows="3" placeholder="@inventory.CustomText2Description"></textarea>
+                                @if (!string.IsNullOrEmpty(inventory.CustomText2Description))
+                                {
+                                    <div class="form-text">@inventory.CustomText2Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomText3State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomText3Name</label>
-                                <textarea name="CustomText3" class="form-control" rows="3"></textarea>
+                                <textarea name="CustomText3" class="form-control" rows="3" placeholder="@inventory.CustomText3Description"></textarea>
+                                @if (!string.IsNullOrEmpty(inventory.CustomText3Description))
+                                {
+                                    <div class="form-text">@inventory.CustomText3Description</div>
+                                }
                             </div>
                         }
 
@@ -82,21 +106,33 @@
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomInt1Name</label>
-                                <input name="CustomInt1" type="number" step="0.01" class="form-control" />
+                                <input name="CustomInt1" type="number" step="1" class="form-control" placeholder="@inventory.CustomInt1Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomInt1Description))
+                                {
+                                    <div class="form-text">@inventory.CustomInt1Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomInt2State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomInt2Name</label>
-                                <input name="CustomInt2" type="number" step="0.01" class="form-control" />
+                                <input name="CustomInt2" type="number" step="1" class="form-control" placeholder="@inventory.CustomInt2Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomInt2Description))
+                                {
+                                    <div class="form-text">@inventory.CustomInt2Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomInt3State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomInt3Name</label>
-                                <input name="CustomInt3" type="number" step="0.01" class="form-control" />
+                                <input name="CustomInt3" type="number" step="1" class="form-control" placeholder="@inventory.CustomInt3Description" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomInt3Description))
+                                {
+                                    <div class="form-text">@inventory.CustomInt3Description</div>
+                                }
                             </div>
                         }
 
@@ -108,6 +144,10 @@
                                     <input name="CustomBool1" type="checkbox" class="form-check-input" role="switch" />
                                     <label class="form-check-label">@inventory.CustomBool1Name</label>
                                 </div>
+                                @if (!string.IsNullOrEmpty(inventory.CustomBool1Description))
+                                {
+                                    <div class="form-text">@inventory.CustomBool1Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomBool2State)
@@ -117,6 +157,10 @@
                                     <input name="CustomBool2" type="checkbox" class="form-check-input" role="switch" />
                                     <label class="form-check-label">@inventory.CustomBool2Name</label>
                                 </div>
+                                @if (!string.IsNullOrEmpty(inventory.CustomBool2Description))
+                                {
+                                    <div class="form-text">@inventory.CustomBool2Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomBool3State)
@@ -126,6 +170,10 @@
                                     <input name="CustomBool3" type="checkbox" class="form-check-input" role="switch" />
                                     <label class="form-check-label">@inventory.CustomBool3Name</label>
                                 </div>
+                                @if (!string.IsNullOrEmpty(inventory.CustomBool3Description))
+                                {
+                                    <div class="form-text">@inventory.CustomBool3Description</div>
+                                }
                             </div>
                         }
 
@@ -134,21 +182,33 @@
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomLink1Name</label>
-                                <input name="CustomLink1" type="url" class="form-control" placeholder="https://" />
+                                <input name="CustomLink1" type="url" class="form-control" placeholder="@(inventory.CustomLink1Description ?? "https://")" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomLink1Description))
+                                {
+                                    <div class="form-text">@inventory.CustomLink1Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomLink2State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomLink2Name</label>
-                                <input name="CustomLink2" type="url" class="form-control" placeholder="https://" />
+                                <input name="CustomLink2" type="url" class="form-control" placeholder="@(inventory.CustomLink2Description ?? "https://")" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomLink2Description))
+                                {
+                                    <div class="form-text">@inventory.CustomLink2Description</div>
+                                }
                             </div>
                         }
                         @if (inventory.CustomLink3State)
                         {
                             <div class="mb-3">
                                 <label class="form-label fw-medium">@inventory.CustomLink3Name</label>
-                                <input name="CustomLink3" type="url" class="form-control" placeholder="https://" />
+                                <input name="CustomLink3" type="url" class="form-control" placeholder="@(inventory.CustomLink3Description ?? "https://")" />
+                                @if (!string.IsNullOrEmpty(inventory.CustomLink3Description))
+                                {
+                                    <div class="form-text">@inventory.CustomLink3Description</div>
+                                }
                             </div>
                         }
 

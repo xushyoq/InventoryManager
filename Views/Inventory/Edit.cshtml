@@ -17,6 +17,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CreatedById" />
@@ -49,105 +50,58 @@
                         <hr />
                         <h5 class="fw-bold mb-3">Кастомные поля</h5>
 
-                        @* String fields *@
-                        <div class="mb-3 p-3 border rounded">
-                            <h6 class="text-muted">Текстовые поля</h6>
-                            @for (int i = 1; i <= 3; i++)
+                        @{
+                            var fieldGroups = new[]
                             {
-                                var stateProp = $"CustomString{i}State";
-                                var nameProp = $"CustomString{i}Name";
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="form-check form-switch mb-0">
-                                        <input type="checkbox" name="@stateProp" class="form-check-input" role="switch"
-                                        @(((bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true) ?
-                                                                     "checked" : "") />
-                                    </div>
-                                    <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                           placeholder="Название поля @i"
-                                           value="@Model.GetType().GetProperty(nameProp)?.GetValue(Model)" />
-                                </div>
-                            }
-                        </div>
+                                new { Prefix = "CustomString", Label = "Текстовые поля (string)", Icon = "bi-type" },
+                                new { Prefix = "CustomText",   Label = "Многострочные поля (text)", Icon = "bi-text-paragraph" },
+                                new { Prefix = "CustomInt",    Label = "Числовые поля (number)", Icon = "bi-123" },
+                                new { Prefix = "CustomBool",   Label = "Чекбокс поля (boolean)", Icon = "bi-toggle-on" },
+                                new { Prefix = "CustomLink",   Label = "Поля-ссылки (URL)", Icon = "bi-link-45deg" },
+                            };
+                        }
 
-                        @* Text fields *@
-                        <div class="mb-3 p-3 border rounded">
-                            <h6 class="text-muted">Многострочные поля</h6>
-                            @for (int i = 1; i <= 3; i++)
-                            {
-                                var stateProp = $"CustomText{i}State";
-                                var nameProp = $"CustomText{i}Name";
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="form-check form-switch mb-0">
-                                        <input type="checkbox" name="@stateProp" class="form-check-input" role="switch"
-                                        @(((bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true) ?
-                                                                 "checked" : "") />
-                                    </div>
-                                    <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                           placeholder="Название поля @i"
-                                           value="@Model.GetType().GetProperty(nameProp)?.GetValue(Model)" />
-                                </div>
-                            }
-                        </div>
+                        @foreach (var group in fieldGroups)
+                        {
+                            <div class="mb-3 p-3 border rounded">
+                                <h6 class="text-muted mb-3">
+                                    <i class="bi @group.Icon me-1"></i> @group.Label
+                                </h6>
+                                @for (int i = 1; i <= 3; i++)
+                                {
+                                    var stateProp = $"{group.Prefix}{i}State";
+                                    var nameProp = $"{group.Prefix}{i}Name";
+                                    var descProp = $"{group.Prefix}{i}Description";
+                                    var showProp = $"{group.Prefix}{i}ShowInTable";
+                                    var isEnabled = (bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true;
+                                    var nameVal = Model.GetType().GetProperty(nameProp)?.GetValue(Model)?.ToString();
+                                    var descVal = Model.GetType().GetProperty(descProp)?.GetValue(Model)?.ToString();
+                                    var showVal = (bool?)Model.GetType().GetProperty(showProp)?.GetValue(Model) == true;
 
-                        @* Number fields *@
-                        <div class="mb-3 p-3 border rounded">
-                            <h6 class="text-muted">Числовые поля</h6>
-                            @for (int i = 1; i <= 3; i++)
-                            {
-                                var stateProp = $"CustomInt{i}State";
-                                var nameProp = $"CustomInt{i}Name";
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="form-check form-switch mb-0">
-                                        <input type="checkbox" name="@stateProp" class="form-check-input" role="switch"
-                                        @(((bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true) ?
-                                                            "checked" : "") />
+                                    <div class="border rounded p-3 mb-2 bg-light">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="form-check form-switch mb-0" title="Включить поле">
+                                                <input type="checkbox" name="@stateProp" value="true" class="form-check-input custom-field-toggle"
+                                                       role="switch" @(isEnabled ? "checked" : "") />
+                                                <input type="hidden" name="@stateProp" value="false" />
+                                            </div>
+                                            <input type="text" name="@nameProp" class="form-control form-control-sm"
+                                                   placeholder="Название поля @i" value="@nameVal" />
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="text" name="@descProp" class="form-control form-control-sm"
+                                                   placeholder="Подсказка для пользователя (необязательно)" value="@descVal" />
+                                            <div class="form-check form-switch mb-0 text-nowrap" title="Показывать в таблице">
+                                                <input type="checkbox" name="@showProp" value="true" class="form-check-input"
+                                                       role="switch" @(showVal ? "checked" : "") />
+                                                <input type="hidden" name="@showProp" value="false" />
+                                                <label class="form-check-label small text-muted">В таблице</label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                           placeholder="Название поля @i"
-                                           value="@Model.GetType().GetProperty(nameProp)?.GetValue(Model)" />
-                                </div>
-                            }
-                        </div>
-
-                        @* Bool fields *@
-                        <div class="mb-3 p-3 border rounded">
-                            <h6 class="text-muted">Чекбокс поля</h6>
-                            @for (int i = 1; i <= 3; i++)
-                            {
-                                var stateProp = $"CustomBool{i}State";
-                                var nameProp = $"CustomBool{i}Name";
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="form-check form-switch mb-0">
-                                        <input type="checkbox" name="@stateProp" class="form-check-input" role="switch"
-                                        @(((bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true) ?
-                                                        "checked" : "") />
-                                    </div>
-                                    <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                           placeholder="Название поля @i"
-                                           value="@Model.GetType().GetProperty(nameProp)?.GetValue(Model)" />
-                                </div>
-                            }
-                        </div>
-
-                        @* Link fields *@
-                        <div class="mb-3 p-3 border rounded">
-                            <h6 class="text-muted">Ссылки</h6>
-                            @for (int i = 1; i <= 3; i++)
-                            {
-                                var stateProp = $"CustomLink{i}State";
-                                var nameProp = $"CustomLink{i}Name";
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="form-check form-switch mb-0">
-                                        <input type="checkbox" name="@stateProp" class="form-check-input" role="switch"
-                                        @(((bool?)Model.GetType().GetProperty(stateProp)?.GetValue(Model) == true) ?
-                                                   "checked" : "") />
-                                    </div>
-                                    <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                           placeholder="Название поля @i"
-                                           value="@Model.GetType().GetProperty(nameProp)?.GetValue(Model)" />
-                                </div>
-                            }
-                        </div>
+                                }
+                            </div>
+                        }
 
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-primary rounded-pill px-4">
