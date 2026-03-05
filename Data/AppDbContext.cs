@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Inventory> Inventories { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
+    public DbSet<Tag> Tags { get; set; } = null!;
+    public DbSet<InventoryTag> InventoryTags { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +45,25 @@ public class AppDbContext : DbContext
             .WithMany(u => u.CreatedItems)
             .HasForeignKey(it => it.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<InventoryTag>()
+            .HasKey(it => new { it.InventoryId, it.TagId });
+
+        modelBuilder.Entity<InventoryTag>()
+            .HasOne(it => it.Inventory)
+            .WithMany(it => it.InventoryTags)
+            .HasForeignKey(it => it.InventoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryTag>()
+            .HasOne(it => it.Tag)
+            .WithMany(it => it.InventoryTags)
+            .HasForeignKey(it => it.TagId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Tag>(entity =>
+            entity.HasIndex(t => t.Name).IsUnique());
 
     }
 }

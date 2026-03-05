@@ -112,5 +112,6 @@ namespace InventoryManager.Models
 
         // Navigation
         public ICollection<Item> Items { get; set; } = new List<Item>();
+        public ICollection<InventoryTag> InventoryTags { get; set; } = new List<InventoryTag>();
     }
 }
