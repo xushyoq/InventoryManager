@@ -41,7 +41,7 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Inventory inventory)
+    public async Task<IActionResult> Create(Inventory inventory, string? TagsInput)
     {
         if (!ModelState.IsValid)
         {
@@ -56,8 +56,37 @@ public class InventoryController : Controller
         inventory.CreatedAt = DateTime.UtcNow;
         inventory.UpdatedAt = DateTime.UtcNow;
 
+        var tagNames = (TagsInput ?? "")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => s.Trim().ToLowerInvariant())
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Distinct()
+            .ToList();
+
         _context.Inventories.Add(inventory);
         await _context.SaveChangesAsync();
+
+        foreach (var name in tagNames)
+        {
+            var tag = await _context.Tags
+                .FirstOrDefaultAsync(t => t.Name.ToLower() == name);
+
+            if (tag == null)
+            {
+                tag = new Tag { Name = name };
+                _context.Tags.Add(tag);
+                await _context.SaveChangesAsync();
+            }
+
+            _context.InventoryTags.Add(new InventoryTag
+            {
+                InventoryId = inventory.Id,
+                TagId = tag.Id
+            });
+        }
+
+        await _context.SaveChangesAsync();
+
 
         return RedirectToAction(nameof(Index));
     }
@@ -66,7 +95,10 @@ public class InventoryController : Controller
     public IActionResult Edit(int inventoryId)
     {
 
-        var inventory = _context.Inventories.FirstOrDefault(i => i.Id == inventoryId);
+        var inventory = _context.Inventories
+            .Include(i => i.InventoryTags)
+            .ThenInclude(it => it.Tag)
+            .FirstOrDefault(i => i.Id == inventoryId);
 
         if (inventory == null)
         {
@@ -84,7 +116,7 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(Inventory inventory)
+    public async Task<IActionResult> Edit(Inventory inventory, string? TagsInput)
     {
         if (!ModelState.IsValid)
         {
@@ -92,8 +124,50 @@ public class InventoryController : Controller
             return View(inventory);
         }
 
+        var existingInventory = await _context.Inventories
+        .Include(i => i.InventoryTags)
+        .FirstOrDefaultAsync(i => i.Id == inventory.Id);
+
+        if (existingInventory == null)
+        {
+            return NotFound();
+        }
+
+        if (!CanEditInventory(existingInventory))
+        {
+            return Forbid();
+        }
+
         inventory.UpdatedAt = DateTime.UtcNow;
         inventory.CreatedAt = DateTime.SpecifyKind(inventory.CreatedAt, DateTimeKind.Utc);
+
+        var tagNames = (TagsInput ?? "")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .Select(s => s.Trim().ToLowerInvariant())
+        .Where(s => !string.IsNullOrWhiteSpace(s))
+        .Distinct()
+        .ToList();
+
+        _context.InventoryTags.RemoveRange(existingInventory.InventoryTags);
+
+        foreach (var name in tagNames)
+        {
+            var tag = await _context.Tags
+                .FirstOrDefaultAsync(t => t.Name.ToLower() == name);
+
+            if (tag == null)
+            {
+                tag = new Tag { Name = name };
+                _context.Tags.Add(tag);
+                await _context.SaveChangesAsync();
+            }
+
+            _context.InventoryTags.Add(new InventoryTag
+            {
+                InventoryId = inventory.Id,
+                TagId = tag.Id
+            });
+        }
 
         _context.Inventories.Update(inventory);
 
