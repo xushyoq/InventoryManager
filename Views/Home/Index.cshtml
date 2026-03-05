@@ -34,6 +34,7 @@
                                     <th>Название</th>
                                     <th>Описание</th>
                                     <th>Категория</th>
+                                    <th>Доступ</th>
                                     <th>Автор</th>
                                     <th>Создано</th>
                                 </tr>
@@ -53,6 +54,20 @@
                                             <span class="badge bg-primary-subtle text-primary rounded-pill">
                                                 @inventory.Category
                                             </span>
+                                        </td>
+                                        <td>
+                                            @if (inventory.IsPublic)
+                                            {
+                                                <span class="badge bg-success-subtle text-success rounded-pill">
+                                                    <i class="bi bi-globe me-1"></i>Публичный
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                                    <i class="bi bi-lock me-1"></i>Приватный
+                                                </span>
+                                            }
                                         </td>
                                         <td class="text-muted small">@inventory.CreatedById</td>
                                         <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
@@ -91,6 +106,7 @@
                                     <th>Название</th>
                                     <th>Описание</th>
                                     <th>Категория</th>
+                                    <th>Доступ</th>
                                     <th>Предметов</th>
                                 </tr>
                             </thead>
@@ -111,6 +127,20 @@
                                             <span class="badge bg-primary-subtle text-primary rounded-pill">
                                                 @inventory.Category
                                             </span>
+                                        </td>
+                                        <td>
+                                            @if (inventory.IsPublic)
+                                            {
+                                                <span class="badge bg-success-subtle text-success rounded-pill">
+                                                    <i class="bi bi-globe me-1"></i>Публичный
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                                    <i class="bi bi-lock me-1"></i>Приватный
+                                                </span>
+                                            }
                                         </td>
                                         <td>
                                             <span class="badge bg-success-subtle text-success rounded-pill">
