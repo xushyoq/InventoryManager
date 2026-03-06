@@ -47,6 +47,14 @@
                             </div>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="TagsInput" class="form-label fw-medium">Теги</label>
+                            <input type="text" name="TagsInput" id="TagsInput" class="form-control"
+                                   value="@(string.Join(", ", Model.InventoryTags.Select(it => it.Tag?.Name ?? "")))"
+                                   placeholder="электроника, книги, мебель (через запятую)" />
+                            <small class="text-muted">Укажите теги через запятую</small>
+                        </div>
+
                         <hr />
                         <h5 class="fw-bold mb-3">Кастомные поля</h5>
 

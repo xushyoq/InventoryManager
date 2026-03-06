@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "iWXQJHUXZDMQZG8jML+njnar0BJgAshXUIn0DHQWrjGc1o/IC5DwtS69VEB0+yEJcHb3t65cSPI9bxc6WrY2LA==",
+  "dgSpecHash": "kvdK9VCpp4uUBHf2eWKmD1Nx06AHJ6c3Z/lSo1wthkT+nR4T5m9hW2myTzZEVA7YtZWi46Pgl795r5s0iqYKNA==",
   "success": true,
   "projectFilePath": "/home/xush/Projects/Itransition/InventoryManager/InventoryManager.csproj",
   "expectedPackageFiles": [
     "/home/xush/.nuget/packages/aspnet.security.oauth.github/8.0.0/aspnet.security.oauth.github.8.0.0.nupkg.sha512",
+    "/home/xush/.nuget/packages/bogus/35.6.5/bogus.35.6.5.nupkg.sha512",
     "/home/xush/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/xush/.nuget/packages/microsoft.aspnetcore.authentication.google/8.0.0/microsoft.aspnetcore.authentication.google.8.0.0.nupkg.sha512",
     "/home/xush/.nuget/packages/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

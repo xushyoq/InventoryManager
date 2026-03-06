@@ -3,6 +3,8 @@
     ViewData["Title"] = "Главная";
     var latestInventories = ViewBag.LatestInventories as List<Inventory> ?? new List<Inventory>();
     var popularInventories = ViewBag.PopularInventories as List<Inventory> ?? new List<Inventory>();
+    var tagCloud = ViewBag.TagCloud as List<TagCloudItem> ?? new List<TagCloudItem>();
+    var selectedTag = ViewBag.SelectedTag as string;
 }
 
 <div class="container py-4">
@@ -34,6 +36,7 @@
                                     <th>Название</th>
                                     <th>Описание</th>
                                     <th>Категория</th>
+                                    <th>Теги</th>
                                     <th>Доступ</th>
                                     <th>Автор</th>
                                     <th>Создано</th>
@@ -54,6 +57,25 @@
                                             <span class="badge bg-primary-subtle text-primary rounded-pill">
                                                 @inventory.Category
                                             </span>
+                                        </td>
+                                        <td>
+                                            @if (inventory.InventoryTags?.Any() == true)
+                                            {
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (var it in inventory.InventoryTags.Take(3))
+                                                    {
+                                                        <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                                    }
+                                                    @if (inventory.InventoryTags.Count > 3)
+                                                    {
+                                                        <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inventory.InventoryTags.Count - 3)</span>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">—</span>
+                                            }
                                         </td>
                                         <td>
                                             @if (inventory.IsPublic)
@@ -106,6 +128,7 @@
                                     <th>Название</th>
                                     <th>Описание</th>
                                     <th>Категория</th>
+                                    <th>Теги</th>
                                     <th>Доступ</th>
                                     <th>Предметов</th>
                                 </tr>
@@ -127,6 +150,25 @@
                                             <span class="badge bg-primary-subtle text-primary rounded-pill">
                                                 @inventory.Category
                                             </span>
+                                        </td>
+                                        <td>
+                                            @if (inventory.InventoryTags?.Any() == true)
+                                            {
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (var it in inventory.InventoryTags.Take(3))
+                                                    {
+                                                        <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                                    }
+                                                    @if (inventory.InventoryTags.Count > 3)
+                                                    {
+                                                        <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inventory.InventoryTags.Count - 3)</span>
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">—</span>
+                                            }
                                         </td>
                                         <td>
                                             @if (inventory.IsPublic)
@@ -157,17 +199,39 @@
             }
         </div>
 
-        <!-- Облако тегов (пока пустое, заполнится когда добавим теги) -->
+        <!-- Облако тегов -->
         <div class="col-12 mt-2">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="fw-bold mb-0">
                     <i class="bi bi-tags me-2 text-success"></i>Теги
                 </h4>
+                @if (!string.IsNullOrEmpty(selectedTag))
+                {
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill">Сбросить фильтр</a>
+                }
             </div>
             <div class="card border-0 shadow-sm p-4">
-                <p class="text-muted mb-0">
-                    <i class="bi bi-info-circle me-1"></i>Теги появятся здесь после их добавления к инвентарям.
-                </p>
+                @if (!tagCloud.Any())
+                {
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle me-1"></i>Теги появятся здесь после их добавления к инвентарям.
+                    </p>
+                }
+                else
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var t in tagCloud)
+                        {
+                            var tagName = t.Name;
+                            var count = t.Count;
+                            var isActive = string.Equals(tagName, selectedTag, StringComparison.OrdinalIgnoreCase);
+                            <a asp-action="Index" asp-route-tag="@tagName"
+                               class="badge @(isActive ? "bg-success" : "bg-success-subtle text-success") rounded-pill text-decoration-none py-2 px-3">
+                                @tagName <span class="opacity-75">(@count)</span>
+                            </a>
+                        }
+                    </div>
+                }
             </div>
         </div>
 

@@ -45,8 +45,8 @@ public class InventoryController : Controller
     {
         if (!ModelState.IsValid)
         {
-            ViewBag.Inventory = inventory;
-            return View();
+            ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
+            return View(inventory);
         }
 
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);

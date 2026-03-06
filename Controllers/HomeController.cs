@@ -17,22 +17,43 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? tag)
     {
-        var latestInventories = await _context.Inventories
+        var query = _context.Inventories.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(tag))
+        {
+            var tagLower = tag.Trim().ToLowerInvariant();
+            query = query.Where(i => i.InventoryTags.Any(it => it.Tag != null && it.Tag.Name.ToLower() == tagLower));
+        }
+
+        var latestInventories = await query
+            .Include(i => i.InventoryTags)
+            .ThenInclude(it => it.Tag)
             .OrderByDescending(i => i.CreatedAt)
             .Take(10)
             .ToListAsync();
 
-        var popularInventories = await _context.Inventories
+        var popularInventories = await query
             .Include(i => i.Items)
+            .Include(i => i.InventoryTags)
+            .ThenInclude(it => it.Tag)
             .OrderByDescending(i => i.Items.Count())
             .Take(5)
             .ToListAsync();
 
+        var tagCloud = (await _context.Tags
+            .Select(t => new { t.Name, Count = t.InventoryTags.Count })
+            .Where(x => x.Count > 0)
+            .OrderByDescending(x => x.Count)
+            .ToListAsync())
+            .Select(x => new TagCloudItem(x.Name, x.Count))
+            .ToList();
+
         ViewBag.LatestInventories = latestInventories;
         ViewBag.PopularInventories = popularInventories;
-
+        ViewBag.TagCloud = tagCloud;
+        ViewBag.SelectedTag = tag?.Trim();
 
         return View();
     }

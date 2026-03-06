@@ -18,6 +18,19 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "Bogus/35.6.5": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Bogus.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Bogus.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -924,6 +937,27 @@
         "aspnet.security.oauth.github.nuspec",
         "lib/net8.0/AspNet.Security.OAuth.GitHub.dll",
         "lib/net8.0/AspNet.Security.OAuth.GitHub.xml"
+      ]
+    },
+    "Bogus/35.6.5": {
+      "sha512": "2FGZn+aAVHjmCgClgmGkTDBVZk0zkLvAKGaxEf5JL6b3i9JbHTE4wnuY4vHCuzlCmJdU6VZjgDfHwmYkQF8VAA==",
+      "type": "package",
+      "path": "bogus/35.6.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "bogus.128.png",
+        "bogus.35.6.5.nupkg.sha512",
+        "bogus.nuspec",
+        "lib/net40/Bogus.dll",
+        "lib/net40/Bogus.xml",
+        "lib/net6.0/Bogus.dll",
+        "lib/net6.0/Bogus.xml",
+        "lib/netstandard1.3/Bogus.dll",
+        "lib/netstandard1.3/Bogus.xml",
+        "lib/netstandard2.0/Bogus.dll",
+        "lib/netstandard2.0/Bogus.xml"
       ]
     },
     "Humanizer.Core/2.14.1": {
@@ -2352,6 +2386,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "AspNet.Security.OAuth.GitHub >= 8.0.0",
+      "Bogus >= 35.6.5",
       "Microsoft.AspNetCore.Authentication.Google >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.0",
@@ -2398,6 +2433,10 @@
           "AspNet.Security.OAuth.GitHub": {
             "target": "Package",
             "version": "[8.0.0, )"
+          },
+          "Bogus": {
+            "target": "Package",
+            "version": "[35.6.5, )"
           },
           "Microsoft.AspNetCore.Authentication.Google": {
             "target": "Package",

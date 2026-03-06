@@ -86,6 +86,11 @@ using (var scope = app.Services.CreateScope())
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while migrating the database.");
     }
+
+    if (!await context.Users.AnyAsync(u => u.Provider == "Seed"))
+    {
+        await DataSeeder.SeedAsync(context);
+    }
 }
 
 await app.RunAsync();
