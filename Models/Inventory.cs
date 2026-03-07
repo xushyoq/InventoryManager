@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http.Features;
+using NpgsqlTypes;
 
 namespace InventoryManager.Models
 {
@@ -30,6 +31,9 @@ namespace InventoryManager.Models
 
         [ConcurrencyCheck]
         public int Version { get; set; } = 0;
+
+        public NpgsqlTsVector? SearchVector { get; set; }
+
         // String fields
         public bool CustomString1State { get; set; } = false;
         public string? CustomString1Name { get; set; }

@@ -34,6 +34,15 @@ public class AppDbContext : DbContext
             .HasForeignKey(i => i.CreatedById)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Inventory>()
+            .HasGeneratedTsVectorColumn(
+                i => i.SearchVector,
+                "english",
+                i => new { i.Name, i.Description })
+            .HasIndex(i => i.SearchVector)
+            .HasMethod("GIN");
+
+
         modelBuilder.Entity<Item>()
             .HasOne(it => it.Inventory)
             .WithMany(inv => inv.Items)
@@ -45,6 +54,14 @@ public class AppDbContext : DbContext
             .WithMany(u => u.CreatedItems)
             .HasForeignKey(it => it.CreatedById)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Item>()
+            .HasGeneratedTsVectorColumn(
+                i => i.SearchVector,
+                "english",
+                i => new { i.CustomString1, i.CustomString2, i.CustomString3, i.CustomId })
+            .HasIndex(i => i.SearchVector)
+            .HasMethod("GIN");
 
 
         modelBuilder.Entity<InventoryTag>()

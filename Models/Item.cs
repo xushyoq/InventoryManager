@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NpgsqlTypes;
 
 namespace InventoryManager.Models;
 
@@ -51,6 +52,8 @@ public class Item
 
     [ConcurrencyCheck]
     public int Version { get; set; } = 0;
+
+    public NpgsqlTsVector? SearchVector { get; set; }
 
     //public ICollection<Like> Likes { get; set; } = new List<Like>();
 }

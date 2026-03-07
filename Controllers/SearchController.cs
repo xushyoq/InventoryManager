@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using InventoryManager.Data;
 using InventoryManager.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class SearchController : Controller
         _context = context;
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index(string? q)
     {
         if (string.IsNullOrWhiteSpace(q))
@@ -22,7 +24,7 @@ public class SearchController : Controller
             return View(new SearchResult());
         }
 
-        var term = q.Trim().ToLowerInvariant();
+        var query = q.Trim();
 
         var visibleInventories = _context.Inventories.AsQueryable();
         if (User.Identity?.IsAuthenticated == true)
@@ -39,20 +41,16 @@ public class SearchController : Controller
         var inventories = await visibleInventories
             .Include(i => i.InventoryTags)
             .ThenInclude(it => it.Tag)
-            .Where(i => (i.Name != null && i.Name.ToLower().Contains(term)) ||
-                        (i.Description != null && i.Description.ToLower().Contains(term)))
+            .Where(i => i.SearchVector!.Matches(EF.Functions.PlainToTsQuery("english", query)))
             .Take(20)
             .ToListAsync();
 
-        var visibleInventoryIds = visibleInventories.Select(i => i.Id);
+        var visibleInventoryIds = await visibleInventories.Select(i => i.Id).ToListAsync();
 
         var items = await _context.Items
             .Include(i => i.Inventory)
             .Where(i => visibleInventoryIds.Contains(i.InventoryId) &&
-                        ((i.CustomId != null && i.CustomId.ToLower().Contains(term)) ||
-                        (i.CustomString1 != null && i.CustomString1.ToLower().Contains(term)) ||
-                        (i.CustomString2 != null && i.CustomString2.ToLower().Contains(term)) ||
-                        (i.CustomString3 != null && i.CustomString3.ToLower().Contains(term))))
+                        i.SearchVector!.Matches(EF.Functions.PlainToTsQuery("english", query)))
             .Take(50)
             .ToListAsync();
 

@@ -1,0 +1,116 @@
+@model InventoryManager.Models.SearchResult
+@{
+    ViewData["Title"] = string.IsNullOrEmpty(Model.Query) ? "Поиск" : $"Результаты поиска: {Model.Query}";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-search me-2"></i>
+        @(string.IsNullOrEmpty(Model.Query) ? "Поиск" : $"Результаты по запросу «{Model.Query}»")
+    </h2>
+
+    @if (string.IsNullOrEmpty(Model.Query))
+    {
+        <p class="text-muted">Введите запрос в строку поиска.</p>
+    }
+    else
+    {
+        <!-- Инвентари -->
+        <h4 class="fw-bold mt-4 mb-3">Инвентари (@Model.Inventories.Count)</h4>
+        @if (!Model.Inventories.Any())
+        {
+            <p class="text-muted">Ничего не найдено.</p>
+        }
+        else
+        {
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Название</th>
+                                <th>Описание</th>
+                                <th>Категория</th>
+                                <th>Теги</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var inv in Model.Inventories)
+                            {
+                                <tr>
+                                    <td class="fw-medium">@inv.Name</td>
+                                    <td class="text-muted small">@(inv.Description?.Length > 60 ? inv.Description[..60] + "..." : inv.Description ?? "—")</td>
+                                    <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
+                                    <td>
+                                        @if (inv.InventoryTags?.Any() == true)
+                                        {
+                                            @foreach (var it in inv.InventoryTags.Take(3))
+                                            {
+                                                <span class="badge bg-success-subtle text-success rounded-pill small me-1">@it.Tag?.Name</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Inventory" asp-action="Details" asp-route-inventoryId="@inv.Id" class="btn btn-sm btn-outline-primary">Открыть</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <!-- Предметы (группировка по инвентарю) -->
+        <h4 class="fw-bold mt-4 mb-3">Предметы (@Model.Items.Count)</h4>
+        @if (!Model.Items.Any())
+        {
+            <p class="text-muted">Ничего не найдено.</p>
+        }
+        else
+        {
+            @foreach (var group in Model.Items.GroupBy(i => i.Inventory))
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-light">
+                        <a asp-controller="Inventory" asp-action="Details" asp-route-inventoryId="@group.Key?.Id" class="fw-medium text-decoration-none">
+                            @group.Key?.Name
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>CustomId</th>
+                                    <th>CustomString1</th>
+                                    <th>CustomString2</th>
+                                    <th>CustomString3</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in group)
+                                {
+                                    <tr>
+                                        <td>@item.CustomId</td>
+                                        <td>@(item.CustomString1 ?? "—")</td>
+                                        <td>@(item.CustomString2 ?? "—")</td>
+                                        <td>@(item.CustomString3 ?? "—")</td>
+                                        <td>
+                                            <a asp-controller="Inventory" asp-action="Details" asp-route-inventoryId="@item.InventoryId" class="btn btn-sm btn-outline-secondary">В инвентарь</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
