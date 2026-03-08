@@ -169,9 +169,9 @@ public class InventoryController : Controller
             });
         }
 
-        _context.Inventories.Update(inventory);
-
-        inventory.Version++;
+        _context.Entry(existingInventory).CurrentValues.SetValues(inventory);
+        existingInventory.UpdatedAt = DateTime.UtcNow;
+        existingInventory.Version++;
 
         try
         {
@@ -191,7 +191,9 @@ public class InventoryController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int[] inventoryIds)
     {
-        var inventories = _context.Inventories.Where(i => inventoryIds.Contains(i.Id));
+        var inventories = await _context.Inventories
+            .Where(i => inventoryIds.Contains(i.Id))
+            .ToListAsync();
 
         if (inventories.Any(i => !CanEditInventory(i)))
         {
