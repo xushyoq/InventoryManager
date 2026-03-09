@@ -54,9 +54,22 @@
                                     <button
                                         class="nav-link dropdown-toggle d-flex align-items-center text-dark border-0 bg-transparent"
                                         type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="@User.FindFirst("ProfileImageUrl")?.Value"
-                                             class="rounded-circle me-2 shadow-sm"
-                                             style="width: 32px; height: 32px; object-fit: cover;" alt="Аватар">
+                                        @{
+                                            var avatarUrl = User.FindFirst("ProfileImageUrl")?.Value;
+                                        }
+                                        @if (!string.IsNullOrEmpty(avatarUrl))
+                                        {
+                                            <img src="@avatarUrl"
+                                                 class="rounded-circle me-2 shadow-sm"
+                                                 style="width: 32px; height: 32px; object-fit: cover;" alt="Аватар">
+                                        }
+                                        else
+                                        {
+                                            <span class="rounded-circle me-2 d-inline-flex align-items-center justify-content-center bg-secondary text-white"
+                                                  style="width: 32px; height: 32px; font-size: 14px;">
+                                                <i class="bi bi-person-fill"></i>
+                                            </span>
+                                        }
                                         <span class="fw-medium">@User.Identity.Name</span>
                                     </button>
                                 

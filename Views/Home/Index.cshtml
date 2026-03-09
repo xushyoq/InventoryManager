@@ -225,7 +225,7 @@
                             var tagName = t.Name;
                             var count = t.Count;
                             var isActive = string.Equals(tagName, selectedTag, StringComparison.OrdinalIgnoreCase);
-                            <a asp-action="Index" asp-route-tag="@tagName"
+                            <a asp-controller="Search" asp-action="Index" asp-route-q="@tagName"
                                class="badge @(isActive ? "bg-success" : "bg-success-subtle text-success") rounded-pill text-decoration-none py-2 px-3">
                                 @tagName <span class="opacity-75">(@count)</span>
                             </a>

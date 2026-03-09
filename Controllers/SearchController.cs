@@ -25,34 +25,69 @@ public class SearchController : Controller
         }
 
         var query = q.Trim();
+        var queryLower = query.ToLowerInvariant();
 
         var visibleInventories = _context.Inventories.AsQueryable();
         if (User.Identity?.IsAuthenticated == true)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             visibleInventories = visibleInventories.Where(i => i.IsPublic || i.CreatedById == userId);
-
         }
         else
         {
             visibleInventories = visibleInventories.Where(i => i.IsPublic);
         }
 
-        var inventories = await visibleInventories
+        var visibleInventoryIds = await visibleInventories.Select(i => i.Id).ToListAsync();
+
+        var inventoriesByFts = await visibleInventories
             .Include(i => i.InventoryTags)
             .ThenInclude(it => it.Tag)
-            .Where(i => i.SearchVector!.Matches(EF.Functions.PlainToTsQuery("english", query)))
+            .Where(i => i.SearchVector != null && i.SearchVector.Matches(EF.Functions.PlainToTsQuery("english", query)))
             .Take(20)
             .ToListAsync();
 
-        var visibleInventoryIds = await visibleInventories.Select(i => i.Id).ToListAsync();
-
-        var items = await _context.Items
+        var itemsByFts = await _context.Items
             .Include(i => i.Inventory)
             .Where(i => visibleInventoryIds.Contains(i.InventoryId) &&
-                        i.SearchVector!.Matches(EF.Functions.PlainToTsQuery("english", query)))
+                        i.SearchVector != null &&
+                        i.SearchVector.Matches(EF.Functions.PlainToTsQuery("english", query)))
             .Take(50)
             .ToListAsync();
+
+        var tagMatchingInventoryIds = await _context.InventoryTags
+            .Where(it => it.Tag != null && it.Tag.Name.ToLower().Contains(queryLower))
+            .Select(it => it.InventoryId)
+            .Where(id => visibleInventoryIds.Contains(id))
+            .Distinct()
+            .ToListAsync();
+
+        var inventoriesByTag = tagMatchingInventoryIds.Count > 0
+            ? await visibleInventories
+                .Include(i => i.InventoryTags)
+                .ThenInclude(it => it.Tag)
+                .Where(i => tagMatchingInventoryIds.Contains(i.Id))
+                .ToListAsync()
+            : new List<Inventory>();
+
+        var itemsByTag = tagMatchingInventoryIds.Count > 0
+            ? await _context.Items
+                .Include(i => i.Inventory)
+                .Where(i => tagMatchingInventoryIds.Contains(i.InventoryId))
+                .Take(50)
+                .ToListAsync()
+            : new List<Item>();
+
+        // Объединяем результаты (без дубликатов)
+        var inventories = inventoriesByFts
+            .UnionBy(inventoriesByTag, i => i.Id)
+            .Take(20)
+            .ToList();
+
+        var items = itemsByFts
+            .UnionBy(itemsByTag, i => i.Id)
+            .Take(50)
+            .ToList();
 
         return View(new SearchResult
         {

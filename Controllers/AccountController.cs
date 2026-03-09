@@ -75,6 +75,12 @@ public class AccountController : Controller
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }
+        else if (user.IsBlocked == true)
+        {
+            await HttpContext.SignOutAsync("External");
+
+            return RedirectToAction("Blocked");
+        }
 
         var localClaims = new List<Claim>
         {
