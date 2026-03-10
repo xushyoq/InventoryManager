@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using InventoryManager.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.Controllers;
@@ -116,6 +119,34 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Profile()
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = int.Parse(userIdString!);
+
+        var myInventories = await _context.Inventories
+            .Where(i => i.CreatedById == userId)
+            .OrderByDescending(i => i.CreatedAt)
+            .ToListAsync();
+
+        var invIdsWithAccess = await _context.InventoryAccesses
+            .Where(a => a.UserId == userId)
+            .Select(a => a.InventoryId)
+            .ToListAsync();
+        var inventoriesWithAccess = await _context.Inventories
+            .Include(i => i.CreatedBy)
+            .Where(i => invIdsWithAccess.Contains(i.Id))
+            .OrderByDescending(i => i.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.MyInventories = myInventories;
+        ViewBag.InventoriesWithAccess = inventoriesWithAccess;
+
+        return View();
     }
 
     [HttpGet]
