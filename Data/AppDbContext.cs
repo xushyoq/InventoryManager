@@ -14,6 +14,8 @@ public class AppDbContext : DbContext
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<Tag> Tags { get; set; } = null!;
     public DbSet<InventoryTag> InventoryTags { get; set; } = null!;
+    public DbSet<InventoryComment> InventoryComments { get; set; } = null!;
+    public DbSet<InventoryAccess> InventoryAccesses { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,5 +84,32 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Tag>(entity =>
             entity.HasIndex(t => t.Name).IsUnique());
 
+        modelBuilder.Entity<InventoryComment>()
+            .HasOne(c => c.Inventory)
+            .WithMany()
+            .HasForeignKey(c => c.InventoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryComment>()
+            .HasOne(c => c.User)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<InventoryAccess>()
+            .HasOne(a => a.Inventory)
+            .WithMany()
+            .HasForeignKey(a => a.InventoryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryAccess>()
+            .HasOne(a => a.User)
+            .WithMany()
+            .HasForeignKey(a => a.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<InventoryAccess>()
+            .HasIndex(a => new { a.InventoryId, a.UserId })
+            .IsUnique();
     }
 }

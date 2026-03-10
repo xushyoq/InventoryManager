@@ -100,6 +100,12 @@
   <data name="NoInventoriesYet" xml:space="preserve">
     <value>Пока нет инвентарей</value>
   </data>
+  <data name="InventoriesWithAccess" xml:space="preserve">
+    <value>Инвентари с доступом</value>
+  </data>
+  <data name="NoInventoriesWithAccess" xml:space="preserve">
+    <value>Нет инвентарей с доступом</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Название</value>
   </data>
@@ -135,6 +141,18 @@
   </data>
   <data name="ItemsCount" xml:space="preserve">
     <value>Предметов</value>
+  </data>
+  <data name="Average" xml:space="preserve">
+    <value>Среднее</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мин</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="TopValues" xml:space="preserve">
+    <value>Топ значений</value>
   </data>
   <data name="ResetFilter" xml:space="preserve">
     <value>Сбросить фильтр</value>
@@ -316,8 +334,41 @@
   <data name="Discussion" xml:space="preserve">
     <value>Обсуждение</value>
   </data>
+  <data name="AddComment" xml:space="preserve">
+    <value>Добавить комментарий</value>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>Пока нет комментариев</value>
+  </data>
+  <data name="SendComment" xml:space="preserve">
+    <value>Отправить</value>
+  </data>
   <data name="AccessTab" xml:space="preserve">
     <value>Доступ</value>
+  </data>
+  <data name="GrantAccess" xml:space="preserve">
+    <value>Выдать доступ</value>
+  </data>
+  <data name="RevokeAccess" xml:space="preserve">
+    <value>Отозвать</value>
+  </data>
+  <data name="NoAccessGranted" xml:space="preserve">
+    <value>Доступ никому не выдан</value>
+  </data>
+  <data name="ViewPermission" xml:space="preserve">
+    <value>Просмотр</value>
+  </data>
+  <data name="EditPermission" xml:space="preserve">
+    <value>Редактирование</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>Email пользователя</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Пользователь не найден</value>
+  </data>
+  <data name="OwnerHasFullAccess" xml:space="preserve">
+    <value>Владелец уже имеет полный доступ</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Статистика</value>

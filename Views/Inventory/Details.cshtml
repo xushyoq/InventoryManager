@@ -3,18 +3,10 @@
 @{
     ViewData["Title"] = Localizer["InventoryDetails"].Value;
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
+    var comments = ViewBag.Comments as IEnumerable<InventoryManager.Models.InventoryComment> ?? Enumerable.Empty<InventoryManager.Models.InventoryComment>();
+    var accesses = ViewBag.Accesses as IEnumerable<InventoryManager.Models.InventoryAccess> ?? Enumerable.Empty<InventoryManager.Models.InventoryAccess>();
 
-    var isAdminClaim = User.FindFirstValue("IsAdmin");
-    var isAdmin = !string.IsNullOrEmpty(isAdminClaim) && Convert.ToBoolean(isAdminClaim);
-
-    var userIdString = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
-    var userId = 0;
-    if (!string.IsNullOrEmpty(userIdString))
-    {
-        userId = int.Parse(userIdString);
-    }
-    
-    var canEdit = isAdmin || (inventory != null && inventory.CreatedById == userId);
+    var canEdit = ViewBag.CanEdit as bool? ?? false;
 }
 
 <div class="container py-4">
@@ -53,18 +45,18 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link disabled" href="#">
+            <a class="nav-link" href="#discussion" data-bs-toggle="tab">
                 <i class="bi bi-chat me-1"></i> @Localizer["Discussion"]
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link disabled" href="#">
-                <i class="bi bi-people me-1"></i> @Localizer["AccessTab"]
+            <a class="nav-link" href="#statistics" data-bs-toggle="tab">
+                <i class="bi bi-bar-chart me-1"></i> @Localizer["Statistics"]
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link disabled" href="#">
-                <i class="bi bi-bar-chart me-1"></i> @Localizer["Statistics"]
+            <a class="nav-link" href="#access" data-bs-toggle="tab">
+                <i class="bi bi-people me-1"></i> @Localizer["AccessTab"]
             </a>
         </li>
     </ul>
@@ -253,6 +245,171 @@
                                             <td><a href="@item.CustomLink3" target="_blank">@item.CustomLink3</a></td>
                                         }
                                         <td class="text-muted small">@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Вкладка Обсуждение -->
+        <div class="tab-pane fade" id="discussion">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-action="AddComment" method="post" class="mb-4">
+                    <input type="hidden" name="inventoryId" value="@inventory.Id" />
+                    <div class="d-flex gap-2">
+                        <input type="text" name="text" class="form-control" placeholder="@Localizer["AddComment"].Value" maxlength="2000" required />
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">@Localizer["SendComment"]</button>
+                    </div>
+                </form>
+            }
+            @if (!comments.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-chat-dots display-1 text-muted"></i>
+                    <h5 class="text-muted mt-3">@Localizer["NoComments"]</h5>
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var c in comments)
+                    {
+                        <div class="list-group-item border-0 border-bottom py-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong class="me-2">@(c.User?.Name ?? "—")</strong>
+                                    <span class="text-muted small">@c.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                                </div>
+                            </div>
+                            <p class="mb-0 mt-1">@c.Text</p>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Вкладка Статистика -->
+        <div class="tab-pane fade" id="statistics">
+            @{
+                var stats = ViewBag.Statistics as InventoryManager.Models.InventoryStatistics;
+            }
+            <div class="mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-box-seam display-4 text-primary"></i>
+                        <h3 class="mt-2 mb-0">@(stats?.ItemsCount ?? 0)</h3>
+                        <p class="text-muted mb-0">@Localizer["ItemsCount"]</p>
+                    </div>
+                </div>
+            </div>
+            @if (stats?.NumericStats?.Any() == true)
+            {
+                <h6 class="fw-semibold mb-2">@Localizer["Average"] / @Localizer["Min"] / @Localizer["Max"]</h6>
+                <div class="row g-3 mb-4">
+                    @foreach (var ns in stats.NumericStats)
+                    {
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold">@ns.Name</h6>
+                                    <p class="mb-0 small text-muted">@Localizer["Average"]: @ns.Avg.ToString("F2") | @Localizer["Min"]: @ns.Min | @Localizer["Max"]: @ns.Max</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            @if (stats?.StringStats?.Any() == true)
+            {
+                <h6 class="fw-semibold mb-2">@Localizer["TopValues"]</h6>
+                <div class="row g-3">
+                    @foreach (var ss in stats.StringStats)
+                    {
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold">@ss.Name</h6>
+                                    <ul class="list-unstyled mb-0 small">
+                                        @foreach (var t in ss.Top)
+                                        {
+                                            <li>@t.Value — @t.Count</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            @if ((stats?.ItemsCount ?? 0) == 0 && (stats?.NumericStats?.Any() != true) && (stats?.StringStats?.Any() != true))
+            {
+                <p class="text-muted">@Localizer["NoDataYet"]</p>
+            }
+        </div>
+
+        <!-- Вкладка Доступ -->
+        <div class="tab-pane fade" id="access">
+            @if (canEdit)
+            {
+                <form asp-action="GrantAccess" method="post" class="mb-4">
+                    <input type="hidden" name="inventoryId" value="@inventory.Id" />
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">@Localizer["UserEmail"]</label>
+                            <input type="email" name="userEmail" class="form-control" placeholder="user@example.com" required />
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">@Localizer["GrantAccess"]</button>
+                        </div>
+                    </div>
+                </form>
+                @if (TempData["AccessError"] != null)
+                {
+                    <div class="alert alert-warning">@TempData["AccessError"]</div>
+                }
+            }
+            @if (!accesses.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-people display-1 text-muted"></i>
+                    <h5 class="text-muted mt-3">@Localizer["NoAccessGranted"]</h5>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>@Localizer["Name"]</th>
+                                    <th>Email</th>
+                                    @if (canEdit)
+                                    {
+                                        <th></th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in accesses)
+                                {
+                                    <tr>
+                                        <td class="fw-medium">@(a.User?.Name ?? "—")</td>
+                                        <td class="text-muted small">@(a.User?.Email ?? "—")</td>
+                                        @if (canEdit)
+                                        {
+                                            <td>
+                                                <form asp-action="RevokeAccess" method="post" class="d-inline" onsubmit="return confirm('@Localizer["ConfirmDelete"].Value');">
+                                                    <input type="hidden" name="inventoryId" value="@inventory.Id" />
+                                                    <input type="hidden" name="userId" value="@a.UserId" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">@Localizer["RevokeAccess"]</button>
+                                                </form>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             </tbody>

@@ -100,6 +100,12 @@
   <data name="NoInventoriesYet" xml:space="preserve">
     <value>No inventories yet</value>
   </data>
+  <data name="InventoriesWithAccess" xml:space="preserve">
+    <value>Inventories with access</value>
+  </data>
+  <data name="NoInventoriesWithAccess" xml:space="preserve">
+    <value>No inventories with access</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -135,6 +141,18 @@
   </data>
   <data name="ItemsCount" xml:space="preserve">
     <value>Items</value>
+  </data>
+  <data name="Average" xml:space="preserve">
+    <value>Average</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="TopValues" xml:space="preserve">
+    <value>Top values</value>
   </data>
   <data name="ResetFilter" xml:space="preserve">
     <value>Reset filter</value>
@@ -316,8 +334,41 @@
   <data name="Discussion" xml:space="preserve">
     <value>Discussion</value>
   </data>
+  <data name="AddComment" xml:space="preserve">
+    <value>Add comment</value>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>No comments yet</value>
+  </data>
+  <data name="SendComment" xml:space="preserve">
+    <value>Send</value>
+  </data>
   <data name="AccessTab" xml:space="preserve">
     <value>Access</value>
+  </data>
+  <data name="GrantAccess" xml:space="preserve">
+    <value>Grant access</value>
+  </data>
+  <data name="RevokeAccess" xml:space="preserve">
+    <value>Revoke</value>
+  </data>
+  <data name="NoAccessGranted" xml:space="preserve">
+    <value>No access granted</value>
+  </data>
+  <data name="ViewPermission" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="EditPermission" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>User email</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="OwnerHasFullAccess" xml:space="preserve">
+    <value>Owner already has full access</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Statistics</value>

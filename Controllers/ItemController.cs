@@ -197,11 +197,14 @@ public class ItemController : Controller
     private bool CanEditInventory(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return false;
+
         var userId = int.Parse(userIdString);
+        var isAdmin = User.FindFirstValue("IsAdmin") == "True";
+        if (inventory.CreatedById == userId || isAdmin) return true;
 
-        var isAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
-
-        return inventory.CreatedById == userId || isAdmin;
+        return _context.InventoryAccesses
+            .Any(a => a.InventoryId == inventory.Id && a.UserId == userId);
     }
 
 
