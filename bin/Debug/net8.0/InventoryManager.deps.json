@@ -17,6 +17,14 @@
         },
         "runtime": {
           "InventoryManager.dll": {}
+        },
+        "resources": {
+          "en/InventoryManager.resources.dll": {
+            "locale": "en"
+          },
+          "ru/InventoryManager.resources.dll": {
+            "locale": "ru"
+          }
         }
       },
       "AspNet.Security.OAuth.GitHub/8.0.0": {

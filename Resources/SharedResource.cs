@@ -1,4 +1,4 @@
-namespace InventoryManager.Resources;
+namespace InventoryManager;
 
 public class SharedResource
 {

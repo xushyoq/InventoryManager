@@ -3,6 +3,8 @@ using InventoryManager.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.Controllers;
@@ -120,5 +122,57 @@ public class AccountController : Controller
     public IActionResult Blocked()
     {
         return View();
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult SetLanguage(string culture, string? returnUrl)
+    {
+        if (string.IsNullOrEmpty(culture) || (culture != "ru" && culture != "en"))
+        {
+            culture = "ru";
+        }
+
+        Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture, culture)),
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddYears(1),
+                Path = "/",
+                IsEssential = true,
+                SameSite = SameSiteMode.Lax,
+                Secure = Request.IsHttps
+            });
+
+        Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        var redirectUrl = !string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/") ? returnUrl : "/";
+        return LocalRedirect(redirectUrl);
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult SetTheme(string theme, string? returnUrl)
+    {
+        if (string.IsNullOrEmpty(theme) || (theme != "light" && theme != "dark"))
+        {
+            theme = "light";
+        }
+
+        Response.Cookies.Append(
+            "theme",
+            theme,
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddYears(1),
+                Path = "/",
+                IsEssential = true,
+                SameSite = SameSiteMode.Lax,
+                Secure = Request.IsHttps
+            });
+
+        Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        var redirectUrl = !string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/") ? returnUrl : "/";
+        return LocalRedirect(redirectUrl);
     }
 }

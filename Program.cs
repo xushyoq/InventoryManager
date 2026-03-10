@@ -18,7 +18,7 @@ builder.Services.AddControllersWithViews()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddLocalization(options => options.ResourcesPath = "");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
@@ -26,6 +26,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SetDefaultCulture("ru")
         .AddSupportedCultures(supportedCultures)
         .AddSupportedUICultures(supportedCultures);
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider(),
+        new QueryStringRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
 });
 
 builder.Services.AddAuthentication(options =>
@@ -66,6 +72,9 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(locOptions);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -74,13 +83,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
-app.UseRequestLocalization(locOptions);
-
 app.UseRouting();
 
 app.UseAuthentication();

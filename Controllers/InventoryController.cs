@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using InventoryManager.Data;
 using InventoryManager.Models;
-using InventoryManager.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

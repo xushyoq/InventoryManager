@@ -4,7 +4,6 @@ using InventoryManager.Models;
 using InventoryManager.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using InventoryManager.Resources;
 
 namespace InventoryManager.Controllers;
 

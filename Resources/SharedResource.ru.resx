@@ -373,4 +373,22 @@
   <data name="ConcurrencyError" xml:space="preserve">
     <value>Данные были изменены другим пользователем. Обновите страницу и попробуйте снова.</value>
   </data>
+  <data name="Language" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="Light" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="Dark" xml:space="preserve">
+    <value>Тёмная</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
 </root>

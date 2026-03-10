@@ -1,12 +1,15 @@
+@{
+    var theme = Context.Request.Cookies["theme"] ?? "light";
+}
 <!DOCTYPE html>
-<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" data-bs-theme="@theme">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - InventoryManager</title>
     
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/InventoryManager.styles.css" asp-append-version="true" />
@@ -14,7 +17,7 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom shadow-sm mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom shadow-sm mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-box-seam me-1"></i> InventoryManager
@@ -28,18 +31,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
+                            <a class="nav-link text-body" asp-area="" asp-controller="Home"
                                asp-action="Index">@Localizer["Home"]</a>
                         </li>
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Inventory" asp-action="Index">@Localizer["MyInventories"]</a>
+                                <a class="nav-link text-body" asp-controller="Inventory" asp-action="Index">@Localizer["MyInventories"]</a>
                                 </li>
                             @if (User.FindFirst("IsAdmin")?.Value == "True")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">
+                                    <a class="nav-link text-body" asp-controller="Admin" asp-action="Index">
                                         <i class="bi bi-shield-check me-1"></i>@Localizer["Admin"]
                                     </a>
                                 </li>
@@ -54,12 +57,31 @@
                                 <i class="bi bi-search"></i>
                             </button>
                         </form>
+                        @{
+                            var currentPath = Context.Request.Path + Context.Request.QueryString;
+                        }
+                        <div class="btn-group btn-group-sm me-2" role="group">
+                            <a class="btn btn-outline-secondary @(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ru") ? "active" : "")"
+                               asp-controller="Account" asp-action="SetLanguage" asp-route-culture="ru" asp-route-returnUrl="@currentPath">RU</a>
+                            <a class="btn btn-outline-secondary @(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("en") ? "active" : "")"
+                               asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@currentPath">EN</a>
+                        </div>
+                        <div class="btn-group btn-group-sm me-2" role="group">
+                            <a class="btn btn-outline-secondary @(theme == "light" ? "active" : "")"
+                               asp-controller="Account" asp-action="SetTheme" asp-route-theme="light" asp-route-returnUrl="@currentPath">
+                                <i class="bi bi-sun-fill"></i>
+                            </a>
+                            <a class="btn btn-outline-secondary @(theme == "dark" ? "active" : "")"
+                               asp-controller="Account" asp-action="SetTheme" asp-route-theme="dark" asp-route-returnUrl="@currentPath">
+                                <i class="bi bi-moon-fill"></i>
+                            </a>
+                        </div>
                         <div class="d-flex align-items-center">
                             @if (User.Identity?.IsAuthenticated == true)
                             {
                                 <div class="dropdown">
                                     <button
-                                        class="nav-link dropdown-toggle d-flex align-items-center text-dark border-0 bg-transparent"
+                                        class="nav-link dropdown-toggle d-flex align-items-center text-body border-0 bg-transparent"
                                         type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         @{
                                             var avatarUrl = User.FindFirst("ProfileImageUrl")?.Value;
@@ -122,7 +144,7 @@
         </footer>
 
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
         @await RenderSectionAsync("Scripts", required: false)
     </body>
