@@ -1,0 +1,198 @@
+@model IEnumerable<InventoryManager.Models.User>
+@{
+    ViewData["Title"] = "Админка";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold mb-0"><i class="bi bi-shield-check me-2"></i>Управление пользователями</h2>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+        <form asp-action="Block" method="post" id="formBlock" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger rounded-pill px-4" disabled id="btnBlock">
+                <i class="bi bi-lock me-1"></i> <span id="blockLabel">Заблокировать</span>
+            </button>
+        </form>
+        <form asp-action="Unblock" method="post" id="formUnblock" class="d-inline">
+            <button type="submit" class="btn btn-outline-success rounded-pill px-4" disabled id="btnUnblock">
+                <i class="bi bi-unlock me-1"></i> <span id="unblockLabel">Разблокировать</span>
+            </button>
+        </form>
+        <form asp-action="MakeAdmin" method="post" id="formMakeAdmin" class="d-inline">
+            <button type="submit" class="btn btn-outline-warning rounded-pill px-4" disabled id="btnMakeAdmin">
+                <i class="bi bi-shield-plus me-1"></i> Сделать админом
+            </button>
+        </form>
+        <form asp-action="RemoveAdmin" method="post" id="formRemoveAdmin" class="d-inline">
+            <button type="submit" class="btn btn-outline-secondary rounded-pill px-4" disabled id="btnRemoveAdmin">
+                <i class="bi bi-shield-minus me-1"></i> Убрать админа
+            </button>
+        </form>
+        <button type="button" class="btn btn-outline-danger rounded-pill px-4" disabled id="btnDelete"
+                data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+        </button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-people display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Нет пользователей</h5>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAll" class="form-check-input" />
+                            </th>
+                            <th>Имя</th>
+                            <th>Email</th>
+                            <th>Provider</th>
+                            <th>Роль</th>
+                            <th>Статус</th>
+                            <th>Создан</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input row-checkbox" value="@user.Id" />
+                                </td>
+                                <td class="fw-medium">@user.Name</td>
+                                <td class="text-muted small">@user.Email</td>
+                                <td><span class="badge bg-secondary-subtle text-secondary rounded-pill">@user.Provider</span></td>
+                                <td>
+                                    @if (user.IsAdmin)
+                                    {
+                                        <span class="badge bg-warning text-dark">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsBlocked)
+                                    {
+                                        <span class="badge bg-danger">Blocked</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Модальное окно удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText" class="text-muted"></p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Отмена</button>
+                <form asp-action="Delete" method="post" id="formDelete">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getSelected() {
+            return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
+        }
+
+        function updateToolbar() {
+            const selected = getSelected();
+            const count = selected.length;
+            const disabled = count === 0;
+            document.getElementById('btnBlock').disabled = disabled;
+            document.getElementById('btnUnblock').disabled = disabled;
+            document.getElementById('btnMakeAdmin').disabled = disabled;
+            document.getElementById('btnRemoveAdmin').disabled = disabled;
+            document.getElementById('btnDelete').disabled = disabled;
+            document.getElementById('blockLabel').textContent = count > 0 ? `Заблокировать (${count})` : 'Заблокировать';
+            document.getElementById('unblockLabel').textContent = count > 0 ? `Разблокировать (${count})` : 'Разблокировать';
+            document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+        }
+
+        function submitForm(formId) {
+            const form = document.getElementById(formId);
+            form.querySelectorAll('input[name="userIds"]').forEach(el => el.remove());
+            getSelected().forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'userIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            form.submit();
+        }
+
+        document.getElementById('selectAll')?.addEventListener('change', function () {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
+            updateToolbar();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateToolbar);
+        });
+
+        document.getElementById('formBlock')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitForm('formBlock');
+        });
+        document.getElementById('formUnblock')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitForm('formUnblock');
+        });
+        document.getElementById('formMakeAdmin')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitForm('formMakeAdmin');
+        });
+        document.getElementById('formRemoveAdmin')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitForm('formRemoveAdmin');
+        });
+
+        document.getElementById('deleteModal')?.addEventListener('show.bs.modal', function () {
+            const selected = getSelected();
+            const form = document.getElementById('formDelete');
+            form.querySelectorAll('input[name="userIds"]').forEach(el => el.remove());
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'userIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            document.getElementById('deleteConfirmText').textContent =
+                `Вы уверены что хотите удалить ${selected.length} пользовател${selected.length === 1 ? 'я' : 'ей'}?`;
+        });
+    </script>
+}
