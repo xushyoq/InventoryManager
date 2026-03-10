@@ -82,12 +82,19 @@ public class AccountController : Controller
             return RedirectToAction("Blocked");
         }
 
+        if (imageUrl != null && imageUrl != user.ProfileImageUrl)
+        {
+            user.ProfileImageUrl = imageUrl;
+            await _context.SaveChangesAsync();
+        }
+
         var localClaims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim("IsAdmin", user.IsAdmin.ToString())
+            new Claim("IsAdmin", user.IsAdmin.ToString()),
+            new Claim("ProfileImageUrl", user.ProfileImageUrl ?? "")
         };
 
         var claimsIdentity = new ClaimsIdentity(localClaims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -107,5 +114,11 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult Blocked()
+    {
+        return View();
     }
 }
