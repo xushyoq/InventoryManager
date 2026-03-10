@@ -2,7 +2,7 @@
 @model IEnumerable<InventoryManager.Models.Inventory>
 
 @{
-    ViewData["Title"] = "Мои инвентари";
+    ViewData["Title"] = Localizer["MyInventories"].Value;
     var isAdmin = Convert.ToBoolean(User.FindFirstValue("IsAdmin"));
     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 }
@@ -10,23 +10,23 @@
 <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold mb-0">Мои инвентари</h2>
+        <h2 class="fw-bold mb-0">@Localizer["MyInventories"]</h2>
     </div>
 
     <!-- Тулбар -->
     <div class="d-flex align-items-center gap-2 mb-3">
         <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
-            <i class="bi bi-plus-lg me-1"></i> Создать
+            <i class="bi bi-plus-lg me-1"></i> @Localizer["Create"]
         </a>
 
         <button type="button" id="btnEdit" class="btn btn-outline-secondary rounded-pill px-4" disabled
                 onclick="editSelected()">
-            <i class="bi bi-pencil me-1"></i> Изменить
+            <i class="bi bi-pencil me-1"></i> @Localizer["Edit"]
         </button>
 
         <button type="button" id="btnDelete" class="btn btn-outline-danger rounded-pill px-4" disabled
                 data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">@Localizer["Delete"]</span>
         </button>
     </div>
 
@@ -34,8 +34,8 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-inbox display-1 text-muted"></i>
-            <h5 class="text-muted mt-3">У вас пока нет инвентарей</h5>
-            <p class="text-muted small">Нажмите "Создать" чтобы начать</p>
+            <h5 class="text-muted mt-3">@Localizer["NoInventories"]</h5>
+            <p class="text-muted small">@Localizer["ClickCreateToStart"]</p>
         </div>
     }
     else
@@ -48,11 +48,11 @@
                             <th style="width: 40px;">
                                 <input type="checkbox" id="selectAll" class="form-check-input" />
                             </th>
-                            <th>Название</th>
-                            <th>Категория</th>
-                            <th>Описание</th>
-                            <th>Создано</th>
-                            <th>Доступ</th>
+                            <th>@Localizer["Name"]</th>
+                            <th>@Localizer["Category"]</th>
+                            <th>@Localizer["Description"]</th>
+                            <th>@Localizer["Created"]</th>
+                            <th>@Localizer["Access"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,13 +80,13 @@
                                     @if (inventory.IsPublic)
                                     {
                                         <span class="badge bg-success-subtle text-success rounded-pill">
-                                            <i class="bi bi-globe me-1"></i>Публичный
+                                            <i class="bi bi-globe me-1"></i>@Localizer["Public"]
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge bg-secondary-subtle text-secondary rounded-pill">
-                                            <i class="bi bi-lock me-1"></i>Приватный
+                                            <i class="bi bi-lock me-1"></i>@Localizer["Private"]
                                         </span>
                                     }
                                 </td>
@@ -100,12 +100,19 @@
 
 </div>
 
+<div id="locStrings" style="display:none"
+     data-delete="@Localizer["Delete"].Value"
+     data-delete-count="@Localizer["DeleteCount"].Value"
+     data-confirm-inventories="@Localizer["ConfirmDeleteInventories"].Value"
+     data-confirm-inventories-suffix1="@Localizer["ConfirmDeleteInventoriesSuffix1"].Value"
+     data-confirm-inventories-suffix-many="@Localizer["ConfirmDeleteInventoriesSuffixMany"].Value"></div>
+
 <!-- Модальное окно подтверждения удаления -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <h5 class="modal-title fw-bold">@Localizer["ConfirmDelete"]</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -113,9 +120,9 @@
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">Отмена</button>
+                        data-bs-dismiss="modal">@Localizer["Cancel"]</button>
                 <form asp-action="Delete" method="post" id="deleteForm">
-                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">@Localizer["Delete"]</button>
                 </form>
             </div>
         </div>
@@ -148,7 +155,8 @@
             const count = selected.length;
             document.getElementById('btnEdit').disabled = count !== 1;
             document.getElementById('btnDelete').disabled = count === 0;
-            document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+            const loc = document.getElementById('locStrings').dataset;
+            document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
         }
 
         function editSelected() {
@@ -173,8 +181,12 @@
                 form.appendChild(input);
             });
 
+            const loc = document.getElementById('locStrings').dataset;
+            const fmt = loc.confirmInventories;
+            const s1 = loc.confirmInventoriesSuffix1 || '';
+            const sMany = loc.confirmInventoriesSuffixMany || '';
             document.getElementById('deleteConfirmText').textContent =
-                `Вы уверены что хотите удалить ${selected.length} инвентар${selected.length === 1 ? 'ь' : 'я'}?`;
+                fmt.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? s1 : sMany);
         });
     </script>
 }

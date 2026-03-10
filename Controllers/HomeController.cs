@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using InventoryManager.Models;
 using InventoryManager.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using InventoryManager.Resources;
 
 namespace InventoryManager.Controllers;
 
@@ -11,10 +13,13 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly AppDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger, AppDbContext context)
+    private readonly IStringLocalizer<SharedResource> _localizer;
+
+    public HomeController(ILogger<HomeController> logger, AppDbContext context, IStringLocalizer<SharedResource> localizer)
     {
         _logger = logger;
         _context = context;
+        _localizer = localizer;
     }
 
     public async Task<IActionResult> Index(string? tag)

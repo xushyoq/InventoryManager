@@ -1,6 +1,6 @@
 @model int
 @{
-    ViewData["Title"] = "Добавить предмет";
+    ViewData["Title"] = Localizer["AddItem"].Value;
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
 }
 
@@ -18,7 +18,7 @@
                        class="btn btn-outline-secondary btn-sm rounded-pill me-3">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-                <h2 class="fw-bold mb-0">Добавить предмет в "@inventory.Name"</h2>
+                <h2 class="fw-bold mb-0">@Localizer["AddItemTo", inventory.Name]</h2>
             </div>
 
             <div class="card border-0 shadow-sm">
@@ -26,9 +26,9 @@
                     <form asp-controller="Item" asp-action="Create" asp-route-inventoryId="@inventory.Id" method="post">
 
                         <div class="mb-3">
-                            <label class="form-label fw-medium">ID предмета <span class="text-danger">*</span></label>
+                            <label class="form-label fw-medium">@Localizer["ItemId"] <span class="text-danger">*</span></label>
                             <input name="CustomId" class="form-control" required
-                                   placeholder="Уникальный идентификатор" />
+                                   placeholder="@Localizer["UniqueIdPlaceholder"]" />
                         </div>
 
                         @* String fields *@
@@ -214,10 +214,10 @@
 
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-primary rounded-pill px-4">
-                                <i class="bi bi-plus-lg me-1"></i> Добавить
+                                <i class="bi bi-plus-lg me-1"></i> @Localizer["Add"]
                             </button>
                             <a asp-controller="Item" asp-action="Index" asp-route-inventoryId="@inventory.Id"
-                               class="btn btn-outline-secondary rounded-pill px-4">Отмена</a>
+                               class="btn btn-outline-secondary rounded-pill px-4">@Localizer["Cancel"]</a>
                         </div>
 
                     </form>

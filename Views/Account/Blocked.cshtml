@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Аккаунт заблокирован";
+    ViewData["Title"] = Localizer["AccountBlocked"].Value;
 }
 
 <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
@@ -10,11 +10,11 @@
                     <i class="bi bi-shield-exclamation display-1 text-danger"></i>
                 </div>
                 
-                <h2 class="fw-bold mb-3">Аккаунт заблокирован</h2>
-                <p class="text-muted mb-4">Ваш аккаунт был заблокирован. Обратитесь к администратору для уточнения причин.</p>
+                <h2 class="fw-bold mb-3">@Localizer["AccountBlocked"]</h2>
+                <p class="text-muted mb-4">@Localizer["AccountBlockedMessage"]</p>
 
                 <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary rounded-3 px-4">
-                    <i class="bi bi-arrow-left me-2"></i>На страницу входа
+                    <i class="bi bi-arrow-left me-2"></i>@Localizer["BackToLogin"]
                 </a>
             </div>
         </div>

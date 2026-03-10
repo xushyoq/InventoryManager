@@ -1,6 +1,6 @@
 @model InventoryManager.Models.Inventory
 @{
-    ViewData["Title"] = "Редактировать инвентарь";
+    ViewData["Title"] = Localizer["EditInventory"].Value;
 }
 
 <div class="container py-4">
@@ -11,7 +11,7 @@
                 <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-                <h2 class="fw-bold mb-0">Редактировать инвентарь</h2>
+                <h2 class="fw-bold mb-0">@Localizer["EditInventory"]</h2>
             </div>
 
             <div class="card border-0 shadow-sm">
@@ -25,47 +25,47 @@
                         <input type="hidden" asp-for="Version" />
 
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label fw-medium">Название</label>
+                            <label asp-for="Name" class="form-label fw-medium">@Localizer["Name"]</label>
                             <input asp-for="Name" class="form-control" />
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Description" class="form-label fw-medium">Описание</label>
+                            <label asp-for="Description" class="form-label fw-medium">@Localizer["Description"]</label>
                             <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Category" class="form-label fw-medium">Категория</label>
+                            <label asp-for="Category" class="form-label fw-medium">@Localizer["Category"]</label>
                             <select asp-for="Category" asp-items="ViewBag.Categories" class="form-select"></select>
                         </div>
 
                         <div class="mb-4">
                             <div class="form-check form-switch">
                                 <input asp-for="IsPublic" class="form-check-input" type="checkbox" role="switch" />
-                                <label asp-for="IsPublic" class="form-check-label">Публичный инвентарь</label>
+                                <label asp-for="IsPublic" class="form-check-label">@Localizer["PublicInventory"]</label>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="TagsInput" class="form-label fw-medium">Теги</label>
+                            <label for="TagsInput" class="form-label fw-medium">@Localizer["Tags"]</label>
                             <input type="text" name="TagsInput" id="TagsInput" class="form-control"
                                    value="@(string.Join(", ", Model.InventoryTags.Select(it => it.Tag?.Name ?? "")))"
-                                   placeholder="электроника, книги, мебель (через запятую)" />
-                            <small class="text-muted">Укажите теги через запятую</small>
+                                   placeholder="@Localizer["TagsPlaceholder"]" />
+                            <small class="text-muted">@Localizer["TagsInputHint"]</small>
                         </div>
 
                         <hr />
-                        <h5 class="fw-bold mb-3">Кастомные поля</h5>
+                        <h5 class="fw-bold mb-3">@Localizer["CustomFields"]</h5>
 
                         @{
                             var fieldGroups = new[]
                             {
-                                new { Prefix = "CustomString", Label = "Текстовые поля (string)", Icon = "bi-type" },
-                                new { Prefix = "CustomText",   Label = "Многострочные поля (text)", Icon = "bi-text-paragraph" },
-                                new { Prefix = "CustomInt",    Label = "Числовые поля (number)", Icon = "bi-123" },
-                                new { Prefix = "CustomBool",   Label = "Чекбокс поля (boolean)", Icon = "bi-toggle-on" },
-                                new { Prefix = "CustomLink",   Label = "Поля-ссылки (URL)", Icon = "bi-link-45deg" },
+                                new { Prefix = "CustomString", Label = Localizer["CustomStringFields"].Value, Icon = "bi-type" },
+                                new { Prefix = "CustomText",   Label = Localizer["CustomTextFields"].Value, Icon = "bi-text-paragraph" },
+                                new { Prefix = "CustomInt",    Label = Localizer["CustomIntFields"].Value, Icon = "bi-123" },
+                                new { Prefix = "CustomBool",   Label = Localizer["CustomBoolFields"].Value, Icon = "bi-toggle-on" },
+                                new { Prefix = "CustomLink",   Label = Localizer["CustomLinkFields"].Value, Icon = "bi-link-45deg" },
                             };
                         }
 
@@ -88,22 +88,22 @@
 
                                     <div class="border rounded p-3 mb-2 bg-light">
                                         <div class="d-flex align-items-center gap-3 mb-2">
-                                            <div class="form-check form-switch mb-0" title="Включить поле">
+                                            <div class="form-check form-switch mb-0" title="@Localizer["EnableField"]">
                                                 <input type="checkbox" name="@stateProp" value="true" class="form-check-input custom-field-toggle"
                                                        role="switch" @(isEnabled ? "checked" : "") />
                                                 <input type="hidden" name="@stateProp" value="false" />
                                             </div>
                                             <input type="text" name="@nameProp" class="form-control form-control-sm"
-                                                   placeholder="Название поля @i" value="@nameVal" />
+                                                   placeholder="@string.Format(Localizer["FieldNamePlaceholder"].Value, i)" value="@nameVal" />
                                         </div>
                                         <div class="d-flex align-items-center gap-3">
                                             <input type="text" name="@descProp" class="form-control form-control-sm"
-                                                   placeholder="Подсказка для пользователя (необязательно)" value="@descVal" />
-                                            <div class="form-check form-switch mb-0 text-nowrap" title="Показывать в таблице">
+                                                   placeholder="@Localizer["FieldHintPlaceholder"]" value="@descVal" />
+                                            <div class="form-check form-switch mb-0 text-nowrap" title="@Localizer["ShowInTable"]">
                                                 <input type="checkbox" name="@showProp" value="true" class="form-check-input"
                                                        role="switch" @(showVal ? "checked" : "") />
                                                 <input type="hidden" name="@showProp" value="false" />
-                                                <label class="form-check-label small text-muted">В таблице</label>
+                                                <label class="form-check-label small text-muted">@Localizer["ShowInTable"]</label>
                                             </div>
                                         </div>
                                     </div>
@@ -113,9 +113,9 @@
 
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-primary rounded-pill px-4">
-                                <i class="bi bi-check-lg me-1"></i> Сохранить
+                                <i class="bi bi-check-lg me-1"></i> @Localizer["Save"]
                             </button>
-                            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4">Отмена</a>
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4">@Localizer["Cancel"]</a>
                         </div>
 
                     </form>

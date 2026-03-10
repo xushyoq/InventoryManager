@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>InventoryManager</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="MyInventories" xml:space="preserve">
+    <value>Мои инвентари</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Админка</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Поиск...</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>Управление</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профиль</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Аватар</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Политика безопасности</value>
+  </data>
+  <data name="LatestInventories" xml:space="preserve">
+    <value>Последние инвентари</value>
+  </data>
+  <data name="NoInventoriesYet" xml:space="preserve">
+    <value>Пока нет инвентарей</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категория</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Автор</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="Public" xml:space="preserve">
+    <value>Публичный</value>
+  </data>
+  <data name="Private" xml:space="preserve">
+    <value>Приватный</value>
+  </data>
+  <data name="Top5Popular" xml:space="preserve">
+    <value>Топ-5 популярных инвентарей</value>
+  </data>
+  <data name="NoDataYet" xml:space="preserve">
+    <value>Пока нет данных</value>
+  </data>
+  <data name="ItemsCount" xml:space="preserve">
+    <value>Предметов</value>
+  </data>
+  <data name="ResetFilter" xml:space="preserve">
+    <value>Сбросить фильтр</value>
+  </data>
+  <data name="TagsHint" xml:space="preserve">
+    <value>Теги появятся здесь после их добавления к инвентарям.</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Результаты поиска</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Результаты по запросу «{0}»</value>
+  </data>
+  <data name="EnterSearchQuery" xml:space="preserve">
+    <value>Введите запрос в строку поиска.</value>
+  </data>
+  <data name="Inventories" xml:space="preserve">
+    <value>Инвентари</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Предметы</value>
+  </data>
+  <data name="NothingFound" xml:space="preserve">
+    <value>Ничего не найдено.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Инвентарь</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>Управление пользователями</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Заблокировать</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Разблокировать</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Сделать админом</value>
+  </data>
+  <data name="RemoveAdmin" xml:space="preserve">
+    <value>Убрать админа</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="NoUsers" xml:space="preserve">
+    <value>Нет пользователей</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Подтвердите удаление</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>Заблокирован</value>
+  </data>
+  <data name="ConfirmDeleteUsers" xml:space="preserve">
+    <value>Вы уверены что хотите удалить {0} пользовател{1}?</value>
+  </data>
+  <data name="ConfirmDeleteUsersSuffix1" xml:space="preserve">
+    <value>я</value>
+  </data>
+  <data name="ConfirmDeleteUsersSuffixMany" xml:space="preserve">
+    <value>ей</value>
+  </data>
+  <data name="ConfirmDeleteInventories" xml:space="preserve">
+    <value>Вы уверены что хотите удалить {0} инвентар{1}?</value>
+  </data>
+  <data name="ConfirmDeleteInventoriesSuffix1" xml:space="preserve">
+    <value>ь</value>
+  </data>
+  <data name="ConfirmDeleteInventoriesSuffixMany" xml:space="preserve">
+    <value>я</value>
+  </data>
+  <data name="ConfirmDeleteItems" xml:space="preserve">
+    <value>Вы уверены что хотите удалить {0} предмет{1}?</value>
+  </data>
+  <data name="ConfirmDeleteItemsSuffix1" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteItemsSuffixMany" xml:space="preserve">
+    <value>а</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="NoInventories" xml:space="preserve">
+    <value>У вас пока нет инвентарей</value>
+  </data>
+  <data name="ClickCreateToStart" xml:space="preserve">
+    <value>Нажмите "Создать" чтобы начать</value>
+  </data>
+  <data name="CreateInventory" xml:space="preserve">
+    <value>Создать инвентарь</value>
+  </data>
+  <data name="NewInventory" xml:space="preserve">
+    <value>Новый инвентарь</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Например: Домашняя электроника</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Описание инвентаря...</value>
+  </data>
+  <data name="PublicInventory" xml:space="preserve">
+    <value>Публичный инвентарь</value>
+  </data>
+  <data name="PublicInventoryHint" xml:space="preserve">
+    <value>Публичный инвентарь виден другим пользователям</value>
+  </data>
+  <data name="TagsPlaceholder" xml:space="preserve">
+    <value>электроника, книги, мебель (через запятую)</value>
+  </data>
+  <data name="TagsInputHint" xml:space="preserve">
+    <value>Укажите теги через запятую</value>
+  </data>
+  <data name="EditInventory" xml:space="preserve">
+    <value>Редактировать инвентарь</value>
+  </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Кастомные поля</value>
+  </data>
+  <data name="CustomStringFields" xml:space="preserve">
+    <value>Текстовые поля (string)</value>
+  </data>
+  <data name="CustomTextFields" xml:space="preserve">
+    <value>Многострочные поля (text)</value>
+  </data>
+  <data name="CustomIntFields" xml:space="preserve">
+    <value>Числовые поля (number)</value>
+  </data>
+  <data name="CustomBoolFields" xml:space="preserve">
+    <value>Чекбокс поля (boolean)</value>
+  </data>
+  <data name="CustomLinkFields" xml:space="preserve">
+    <value>Поля-ссылки (URL)</value>
+  </data>
+  <data name="EnableField" xml:space="preserve">
+    <value>Включить поле</value>
+  </data>
+  <data name="FieldNamePlaceholder" xml:space="preserve">
+    <value>Название поля {0}</value>
+  </data>
+  <data name="FieldHintPlaceholder" xml:space="preserve">
+    <value>Подсказка для пользователя (необязательно)</value>
+  </data>
+  <data name="ShowInTable" xml:space="preserve">
+    <value>В таблице</value>
+  </data>
+  <data name="InventoryDetails" xml:space="preserve">
+    <value>Детали инвентаря</value>
+  </data>
+  <data name="InventorySettings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="ItemsTab" xml:space="preserve">
+    <value>Айтемы</value>
+  </data>
+  <data name="Discussion" xml:space="preserve">
+    <value>Обсуждение</value>
+  </data>
+  <data name="AccessTab" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Нет предметов</value>
+  </data>
+  <data name="ClickAddToStart" xml:space="preserve">
+    <value>Нажмите "Добавить" чтобы начать</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="AccountBlocked" xml:space="preserve">
+    <value>Аккаунт заблокирован</value>
+  </data>
+  <data name="AccountBlockedMessage" xml:space="preserve">
+    <value>Ваш аккаунт был заблокирован. Обратитесь к администратору для уточнения причин.</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>На страницу входа</value>
+  </data>
+  <data name="AddItem" xml:space="preserve">
+    <value>Добавить предмет</value>
+  </data>
+  <data name="AddItemTo" xml:space="preserve">
+    <value>Добавить предмет в "{0}"</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>ID предмета</value>
+  </data>
+  <data name="UniqueIdPlaceholder" xml:space="preserve">
+    <value>Уникальный идентификатор</value>
+  </data>
+  <data name="EditItem" xml:space="preserve">
+    <value>Редактировать предмет</value>
+  </data>
+  <data name="BlockCount" xml:space="preserve">
+    <value>Заблокировать ({0})</value>
+  </data>
+  <data name="UnblockCount" xml:space="preserve">
+    <value>Разблокировать ({0})</value>
+  </data>
+  <data name="DeleteCount" xml:space="preserve">
+    <value>Удалить ({0})</value>
+  </data>
+  <data name="ConcurrencyError" xml:space="preserve">
+    <value>Данные были изменены другим пользователем. Обновите страницу и попробуйте снова.</value>
+  </data>
+</root>

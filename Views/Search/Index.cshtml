@@ -1,25 +1,25 @@
 @model InventoryManager.Models.SearchResult
 @{
-    ViewData["Title"] = string.IsNullOrEmpty(Model.Query) ? "Поиск" : $"Результаты поиска: {Model.Query}";
+    ViewData["Title"] = string.IsNullOrEmpty(Model.Query) ? Localizer["Search"].Value : string.Format(Localizer["SearchResultsFor"].Value, Model.Query);
 }
 
 <div class="container py-4">
     <h2 class="fw-bold mb-4">
         <i class="bi bi-search me-2"></i>
-        @(string.IsNullOrEmpty(Model.Query) ? "Поиск" : $"Результаты по запросу «{Model.Query}»")
+        @(string.IsNullOrEmpty(Model.Query) ? Localizer["Search"] : Localizer["SearchResultsFor", Model.Query])
     </h2>
 
     @if (string.IsNullOrEmpty(Model.Query))
     {
-        <p class="text-muted">Введите запрос в строку поиска.</p>
+        <p class="text-muted">@Localizer["EnterSearchQuery"]</p>
     }
     else
     {
         <!-- Инвентари -->
-        <h4 class="fw-bold mt-4 mb-3">Инвентари (@Model.Inventories.Count)</h4>
+        <h4 class="fw-bold mt-4 mb-3">@Localizer["Inventories"] (@Model.Inventories.Count)</h4>
         @if (!Model.Inventories.Any())
         {
-            <p class="text-muted">Ничего не найдено.</p>
+            <p class="text-muted">@Localizer["NothingFound"]</p>
         }
         else
         {
@@ -28,10 +28,10 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Название</th>
-                                <th>Описание</th>
-                                <th>Категория</th>
-                                <th>Теги</th>
+                                <th>@Localizer["Name"]</th>
+                                <th>@Localizer["Description"]</th>
+                                <th>@Localizer["Category"]</th>
+                                <th>@Localizer["Tags"]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,10 +64,10 @@
         }
 
         <!-- Предметы (группировка по инвентарю) -->
-        <h4 class="fw-bold mt-4 mb-3">Предметы (@Model.Items.Count)</h4>
+        <h4 class="fw-bold mt-4 mb-3">@Localizer["Items"] (@Model.Items.Count)</h4>
         @if (!Model.Items.Any())
         {
-            <p class="text-muted">Ничего не найдено.</p>
+            <p class="text-muted">@Localizer["NothingFound"]</p>
         }
         else
         {
@@ -84,7 +84,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>ID</th>
-                                    <th>Инвентарь</th>
+                                    <th>@Localizer["Inventory"]</th>
                                 </tr>
                             </thead>
                             <tbody>

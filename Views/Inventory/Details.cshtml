@@ -1,7 +1,7 @@
 @using System.Security.Claims
 @model IEnumerable<InventoryManager.Models.Item>
 @{
-    ViewData["Title"] = "Детали инвентаря";
+    ViewData["Title"] = Localizer["InventoryDetails"].Value;
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
 
     var isAdminClaim = User.FindFirstValue("IsAdmin");
@@ -29,18 +29,18 @@
                 <span class="badge bg-primary-subtle text-primary rounded-pill">@inventory.Category</span>
                 @if (inventory.IsPublic)
                 {
-                    <span class="badge bg-success-subtle text-success rounded-pill ms-1">Публичный</span>
+                    <span class="badge bg-success-subtle text-success rounded-pill ms-1">@Localizer["Public"]</span>
                 }
                 else
                 {
-                    <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">Приватный</span>
+                    <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">@Localizer["Private"]</span>
                 }
             </div>
         </div>
         @if (canEdit)
         {
             <a asp-action="Edit" asp-route-inventoryId="@inventory.Id" class="btn btn-outline-primary rounded-pill px-4">
-                <i class="bi bi-pencil me-1"></i> Настройки
+                <i class="bi bi-pencil me-1"></i> @Localizer["InventorySettings"]
             </a>
         }
     </div>
@@ -49,22 +49,22 @@
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
             <a class="nav-link active" href="#items" data-bs-toggle="tab">
-                <i class="bi bi-box me-1"></i> Айтемы
+                <i class="bi bi-box me-1"></i> @Localizer["ItemsTab"]
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link disabled" href="#">
-                <i class="bi bi-chat me-1"></i> Обсуждение
+                <i class="bi bi-chat me-1"></i> @Localizer["Discussion"]
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link disabled" href="#">
-                <i class="bi bi-people me-1"></i> Доступ
+                <i class="bi bi-people me-1"></i> @Localizer["AccessTab"]
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link disabled" href="#">
-                <i class="bi bi-bar-chart me-1"></i> Статистика
+                <i class="bi bi-bar-chart me-1"></i> @Localizer["Statistics"]
             </a>
         </li>
     </ul>
@@ -79,15 +79,15 @@
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <a asp-controller="Item" asp-action="Create" asp-route-inventoryId="@inventory.Id"
                            class="btn btn-primary rounded-pill px-4">
-                        <i class="bi bi-plus-lg me-1"></i> Добавить
+                        <i class="bi bi-plus-lg me-1"></i> @Localizer["Add"]
                     </a>
                     <button type="button" id="btnEdit" class="btn btn-outline-secondary rounded-pill px-4" disabled
                             onclick="editSelected()">
-                        <i class="bi bi-pencil me-1"></i> Изменить
+                        <i class="bi bi-pencil me-1"></i> @Localizer["Edit"]
                     </button>
                     <button type="button" id="btnDelete" class="btn btn-outline-danger rounded-pill px-4" disabled
                             data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+                        <i class="bi bi-trash me-1"></i> <span id="deleteLabel">@Localizer["Delete"]</span>
                     </button>
                 </div>
             }
@@ -96,10 +96,10 @@
             {
                 <div class="text-center py-5">
                     <i class="bi bi-inbox display-1 text-muted"></i>
-                    <h5 class="text-muted mt-3">Нет предметов</h5>
+                    <h5 class="text-muted mt-3">@Localizer["NoItems"]</h5>
                     @if (canEdit)
                     {
-                        <p class="text-muted small">Нажмите "Добавить" чтобы начать</p>
+                        <p class="text-muted small">@Localizer["ClickAddToStart"]</p>
                     }
                 </div>
             }
@@ -177,7 +177,7 @@
                                     {
                                         <th>@inventory.CustomLink3Name</th>
                                     }
-                                    <th>Создано</th>
+                                    <th>@Localizer["Created"]</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -230,15 +230,15 @@
                                         }
                                         @if (inventory.CustomBool1State)
                                         {
-                                            <td>@(item.CustomBool1 == true ? "Да" : "Нет")</td>
+                                            <td>@(item.CustomBool1 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
                                         @if (inventory.CustomBool2State)
                                         {
-                                            <td>@(item.CustomBool2 == true ? "Да" : "Нет")</td>
+                                            <td>@(item.CustomBool2 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
                                         @if (inventory.CustomBool3State)
                                         {
-                                            <td>@(item.CustomBool3 == true ? "Да" : "Нет")</td>
+                                            <td>@(item.CustomBool3 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
                                         @if (inventory.CustomLink1State)
                                         {
@@ -264,12 +264,19 @@
     </div>
 </div>
 
+<div id="locStrings" style="display:none"
+     data-delete="@Localizer["Delete"].Value"
+     data-delete-count="@Localizer["DeleteCount"].Value"
+     data-confirm-items="@Localizer["ConfirmDeleteItems"].Value"
+     data-confirm-items-suffix1="@Localizer["ConfirmDeleteItemsSuffix1"].Value"
+     data-confirm-items-suffix-many="@Localizer["ConfirmDeleteItemsSuffixMany"].Value"></div>
+
 <!-- Модальное окно -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <h5 class="modal-title fw-bold">@Localizer["ConfirmDelete"]</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -277,9 +284,9 @@
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                        data-bs-dismiss="modal">Отмена</button>
+                        data-bs-dismiss="modal">@Localizer["Cancel"]</button>
                 <form asp-controller="Item" asp-action="Delete" method="post" id="deleteForm">
-                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">@Localizer["Delete"]</button>
                 </form>
             </div>
         </div>
@@ -309,7 +316,8 @@
                         const count = selected.length;
                         document.getElementById('btnEdit').disabled = count !== 1;
                         document.getElementById('btnDelete').disabled = count === 0;
-                                                                        document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+                                                                        const loc = document.getElementById('locStrings').dataset;
+                                                                        document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
                                                                     }
 
                         function editSelected() {
@@ -331,8 +339,12 @@
                         input.value = id;
                         form.appendChild(input);
                                                                         });
-                        document.getElementById('deleteConfirmText').textContent =
-                        `Вы уверены что хотите удалить ${selected.length} предмет${selected.length === 1 ? '' : 'а'}?`;
+                        const loc = document.getElementById('locStrings').dataset;
+                                                                        const fmt = loc.confirmItems;
+                                                                        const s1 = loc.confirmItemsSuffix1 || '';
+                                                                        const sMany = loc.confirmItemsSuffixMany || '';
+                                                                        document.getElementById('deleteConfirmText').textContent =
+                                                                        fmt.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? s1 : sMany);
                                                                     });
                 </text>
         }

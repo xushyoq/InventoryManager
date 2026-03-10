@@ -1,37 +1,37 @@
 @model IEnumerable<InventoryManager.Models.User>
 @{
-    ViewData["Title"] = "Админка";
+    ViewData["Title"] = Localizer["Admin"].Value;
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold mb-0"><i class="bi bi-shield-check me-2"></i>Управление пользователями</h2>
+        <h2 class="fw-bold mb-0"><i class="bi bi-shield-check me-2"></i>@Localizer["UserManagement"]</h2>
     </div>
 
     <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
         <form asp-action="Block" method="post" id="formBlock" class="d-inline">
             <button type="submit" class="btn btn-outline-danger rounded-pill px-4" disabled id="btnBlock">
-                <i class="bi bi-lock me-1"></i> <span id="blockLabel">Заблокировать</span>
+                <i class="bi bi-lock me-1"></i> <span id="blockLabel">@Localizer["Block"]</span>
             </button>
         </form>
         <form asp-action="Unblock" method="post" id="formUnblock" class="d-inline">
             <button type="submit" class="btn btn-outline-success rounded-pill px-4" disabled id="btnUnblock">
-                <i class="bi bi-unlock me-1"></i> <span id="unblockLabel">Разблокировать</span>
+                <i class="bi bi-unlock me-1"></i> <span id="unblockLabel">@Localizer["Unblock"]</span>
             </button>
         </form>
         <form asp-action="MakeAdmin" method="post" id="formMakeAdmin" class="d-inline">
             <button type="submit" class="btn btn-outline-warning rounded-pill px-4" disabled id="btnMakeAdmin">
-                <i class="bi bi-shield-plus me-1"></i> Сделать админом
+                <i class="bi bi-shield-plus me-1"></i> @Localizer["MakeAdmin"]
             </button>
         </form>
         <form asp-action="RemoveAdmin" method="post" id="formRemoveAdmin" class="d-inline">
             <button type="submit" class="btn btn-outline-secondary rounded-pill px-4" disabled id="btnRemoveAdmin">
-                <i class="bi bi-shield-minus me-1"></i> Убрать админа
+                <i class="bi bi-shield-minus me-1"></i> @Localizer["RemoveAdmin"]
             </button>
         </form>
         <button type="button" class="btn btn-outline-danger rounded-pill px-4" disabled id="btnDelete"
                 data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">Удалить</span>
+            <i class="bi bi-trash me-1"></i> <span id="deleteLabel">@Localizer["Delete"]</span>
         </button>
     </div>
 
@@ -39,7 +39,7 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-people display-1 text-muted"></i>
-            <h5 class="text-muted mt-3">Нет пользователей</h5>
+            <h5 class="text-muted mt-3">@Localizer["NoUsers"]</h5>
         </div>
     }
     else
@@ -52,12 +52,12 @@
                             <th style="width: 40px;">
                                 <input type="checkbox" id="selectAll" class="form-check-input" />
                             </th>
-                            <th>Имя</th>
-                            <th>Email</th>
+                            <th>@Localizer["Name"]</th>
+                            <th>@Localizer["Email"]</th>
                             <th>Provider</th>
-                            <th>Роль</th>
-                            <th>Статус</th>
-                            <th>Создан</th>
+                            <th>@Localizer["Role"]</th>
+                            <th>@Localizer["Status"]</th>
+                            <th>@Localizer["Created"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,7 +83,7 @@
                                 <td>
                                     @if (user.IsBlocked)
                                     {
-                                        <span class="badge bg-danger">Blocked</span>
+                                        <span class="badge bg-danger">@Localizer["Blocked"]</span>
                                     }
                                     else
                                     {
@@ -100,21 +100,33 @@
     }
 </div>
 
+<!-- Локализованные строки для JS -->
+<div id="locStrings" style="display:none"
+     data-block="@Localizer["Block"].Value"
+     data-unblock="@Localizer["Unblock"].Value"
+     data-delete="@Localizer["Delete"].Value"
+     data-block-count="@Localizer["BlockCount"].Value"
+     data-unblock-count="@Localizer["UnblockCount"].Value"
+     data-delete-count="@Localizer["DeleteCount"].Value"
+     data-confirm-users="@Localizer["ConfirmDeleteUsers"].Value"
+     data-confirm-users-suffix1="@Localizer["ConfirmDeleteUsersSuffix1"].Value"
+     data-confirm-users-suffix-many="@Localizer["ConfirmDeleteUsersSuffixMany"].Value"></div>
+
 <!-- Модальное окно удаления -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Подтвердите удаление</h5>
+                <h5 class="modal-title fw-bold">@Localizer["ConfirmDelete"]</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p id="deleteConfirmText" class="text-muted"></p>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
                 <form asp-action="Delete" method="post" id="formDelete">
-                    <button type="submit" class="btn btn-danger rounded-pill px-4">Удалить</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">@Localizer["Delete"]</button>
                 </form>
             </div>
         </div>
@@ -131,14 +143,15 @@
             const selected = getSelected();
             const count = selected.length;
             const disabled = count === 0;
+            const loc = document.getElementById('locStrings').dataset;
             document.getElementById('btnBlock').disabled = disabled;
             document.getElementById('btnUnblock').disabled = disabled;
             document.getElementById('btnMakeAdmin').disabled = disabled;
             document.getElementById('btnRemoveAdmin').disabled = disabled;
             document.getElementById('btnDelete').disabled = disabled;
-            document.getElementById('blockLabel').textContent = count > 0 ? `Заблокировать (${count})` : 'Заблокировать';
-            document.getElementById('unblockLabel').textContent = count > 0 ? `Разблокировать (${count})` : 'Разблокировать';
-            document.getElementById('deleteLabel').textContent = count > 0 ? `Удалить (${count})` : 'Удалить';
+            document.getElementById('blockLabel').textContent = count > 0 ? loc.blockCount.replace('{0}', count) : loc.block;
+            document.getElementById('unblockLabel').textContent = count > 0 ? loc.unblockCount.replace('{0}', count) : loc.unblock;
+            document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
         }
 
         function submitForm(formId) {
@@ -191,8 +204,12 @@
                 input.value = id;
                 form.appendChild(input);
             });
+            const loc = document.getElementById('locStrings').dataset;
+            const fmt = loc.confirmUsers;
+            const s1 = loc.confirmUsersSuffix1 || '';
+            const sMany = loc.confirmUsersSuffixMany || '';
             document.getElementById('deleteConfirmText').textContent =
-                `Вы уверены что хотите удалить ${selected.length} пользовател${selected.length === 1 ? 'я' : 'ей'}?`;
+                fmt.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? s1 : sMany);
         });
     </script>
 }

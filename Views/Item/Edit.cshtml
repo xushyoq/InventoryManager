@@ -1,6 +1,6 @@
 @model InventoryManager.Models.Item
 @{
-    ViewData["Title"] = "Редактировать предмет";
+    ViewData["Title"] = Localizer["EditItem"].Value;
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
 }
 
@@ -13,7 +13,7 @@
                        class="btn btn-outline-secondary btn-sm rounded-pill me-3">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-                <h2 class="fw-bold mb-0">Редактировать предмет</h2>
+                <h2 class="fw-bold mb-0">@Localizer["EditItem"]</h2>
             </div>
 
             <div class="card border-0 shadow-sm">
@@ -28,7 +28,7 @@
                         <input type="hidden" asp-for="Version" />
 
                         <div class="mb-3">
-                            <label class="form-label fw-medium">ID предмета</label>
+                            <label class="form-label fw-medium">@Localizer["ItemId"]</label>
                             <input asp-for="CustomId" class="form-control" />
                         </div>
 
@@ -161,10 +161,10 @@
 
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-primary rounded-pill px-4">
-                                <i class="bi bi-check-lg me-1"></i> Сохранить
+                                <i class="bi bi-check-lg me-1"></i> @Localizer["Save"]
                             </button>
                             <a asp-controller="Item" asp-action="Index" asp-route-inventoryId="@inventory.Id"
-                               class="btn btn-outline-secondary rounded-pill px-4">Отмена</a>
+                               class="btn btn-outline-secondary rounded-pill px-4">@Localizer["Cancel"]</a>
                         </div>
 
                     </form>

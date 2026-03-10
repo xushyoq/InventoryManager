@@ -107,3 +107,12 @@
 /home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/AspNet.Security.OAuth.GitHub.dll
 /home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/appsettings.Production.json
 /home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/Bogus.dll
+/home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/en/InventoryManager.resources.dll
+/home/xush/Projects/Itransition/InventoryManager/bin/Debug/net8.0/ru/InventoryManager.resources.dll
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/InventoryManager.Resources.SharedResource.en.resources
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/InventoryManager.Resources.SharedResource.ru.resources
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/InventoryManager.csproj.GenerateResource.cache
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/en/InventoryManager.resources.cs
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/en/InventoryManager.resources.dll
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/ru/InventoryManager.resources.cs
+/home/xush/Projects/Itransition/InventoryManager/obj/Debug/net8.0/ru/InventoryManager.resources.dll

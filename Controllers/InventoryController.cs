@@ -2,11 +2,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using InventoryManager.Data;
 using InventoryManager.Models;
+using InventoryManager.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Localization;
 
 namespace InventoryManager.Controllers;
 
@@ -14,10 +16,12 @@ namespace InventoryManager.Controllers;
 public class InventoryController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public InventoryController(AppDbContext context)
+    public InventoryController(AppDbContext context, IStringLocalizer<SharedResource> localizer)
     {
         _context = context;
+        _localizer = localizer;
     }
 
     public async Task<IActionResult> Index()
@@ -179,7 +183,7 @@ public class InventoryController : Controller
         }
         catch (DbUpdateConcurrencyException)
         {
-            ModelState.AddModelError("", "Данные были изменены другим пользователем. Обновите страницу и попробуйте снова.");
+            ModelState.AddModelError("", _localizer["ConcurrencyError"].Value);
             ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
             return View(inventory);
         }

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>InventoryManager</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="MyInventories" xml:space="preserve">
+    <value>My inventories</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy policy</value>
+  </data>
+  <data name="LatestInventories" xml:space="preserve">
+    <value>Latest inventories</value>
+  </data>
+  <data name="NoInventoriesYet" xml:space="preserve">
+    <value>No inventories yet</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Public" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="Private" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="Top5Popular" xml:space="preserve">
+    <value>Top 5 popular inventories</value>
+  </data>
+  <data name="NoDataYet" xml:space="preserve">
+    <value>No data yet</value>
+  </data>
+  <data name="ItemsCount" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="ResetFilter" xml:space="preserve">
+    <value>Reset filter</value>
+  </data>
+  <data name="TagsHint" xml:space="preserve">
+    <value>Tags will appear here after they are added to inventories.</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Search results</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Results for "{0}"</value>
+  </data>
+  <data name="EnterSearchQuery" xml:space="preserve">
+    <value>Enter your search query in the search box.</value>
+  </data>
+  <data name="Inventories" xml:space="preserve">
+    <value>Inventories</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="NothingFound" xml:space="preserve">
+    <value>Nothing found.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventory</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>User management</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Block</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Unblock</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Make admin</value>
+  </data>
+  <data name="RemoveAdmin" xml:space="preserve">
+    <value>Remove admin</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="NoUsers" xml:space="preserve">
+    <value>No users</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Confirm deletion</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="ConfirmDeleteUsers" xml:space="preserve">
+    <value>Are you sure you want to delete {0} user(s)?</value>
+  </data>
+  <data name="ConfirmDeleteUsersSuffix1" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteUsersSuffixMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteInventories" xml:space="preserve">
+    <value>Are you sure you want to delete {0} inventory/inventories?</value>
+  </data>
+  <data name="ConfirmDeleteInventoriesSuffix1" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteInventoriesSuffixMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteItems" xml:space="preserve">
+    <value>Are you sure you want to delete {0} item(s)?</value>
+  </data>
+  <data name="ConfirmDeleteItemsSuffix1" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ConfirmDeleteItemsSuffixMany" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="NoInventories" xml:space="preserve">
+    <value>You have no inventories yet</value>
+  </data>
+  <data name="ClickCreateToStart" xml:space="preserve">
+    <value>Click "Create" to get started</value>
+  </data>
+  <data name="CreateInventory" xml:space="preserve">
+    <value>Create inventory</value>
+  </data>
+  <data name="NewInventory" xml:space="preserve">
+    <value>New inventory</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>e.g. Home electronics</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Inventory description...</value>
+  </data>
+  <data name="PublicInventory" xml:space="preserve">
+    <value>Public inventory</value>
+  </data>
+  <data name="PublicInventoryHint" xml:space="preserve">
+    <value>Public inventory is visible to other users</value>
+  </data>
+  <data name="TagsPlaceholder" xml:space="preserve">
+    <value>electronics, books, furniture (comma-separated)</value>
+  </data>
+  <data name="TagsInputHint" xml:space="preserve">
+    <value>Enter tags separated by commas</value>
+  </data>
+  <data name="EditInventory" xml:space="preserve">
+    <value>Edit inventory</value>
+  </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Custom fields</value>
+  </data>
+  <data name="CustomStringFields" xml:space="preserve">
+    <value>Text fields (string)</value>
+  </data>
+  <data name="CustomTextFields" xml:space="preserve">
+    <value>Multiline fields (text)</value>
+  </data>
+  <data name="CustomIntFields" xml:space="preserve">
+    <value>Number fields</value>
+  </data>
+  <data name="CustomBoolFields" xml:space="preserve">
+    <value>Checkbox fields (boolean)</value>
+  </data>
+  <data name="CustomLinkFields" xml:space="preserve">
+    <value>Link fields (URL)</value>
+  </data>
+  <data name="EnableField" xml:space="preserve">
+    <value>Enable field</value>
+  </data>
+  <data name="FieldNamePlaceholder" xml:space="preserve">
+    <value>Field name {0}</value>
+  </data>
+  <data name="FieldHintPlaceholder" xml:space="preserve">
+    <value>User hint (optional)</value>
+  </data>
+  <data name="ShowInTable" xml:space="preserve">
+    <value>In table</value>
+  </data>
+  <data name="InventoryDetails" xml:space="preserve">
+    <value>Inventory details</value>
+  </data>
+  <data name="InventorySettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ItemsTab" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="Discussion" xml:space="preserve">
+    <value>Discussion</value>
+  </data>
+  <data name="AccessTab" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>No items</value>
+  </data>
+  <data name="ClickAddToStart" xml:space="preserve">
+    <value>Click "Add" to get started</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="AccountBlocked" xml:space="preserve">
+    <value>Account blocked</value>
+  </data>
+  <data name="AccountBlockedMessage" xml:space="preserve">
+    <value>Your account has been blocked. Please contact the administrator for more information.</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Back to login</value>
+  </data>
+  <data name="AddItem" xml:space="preserve">
+    <value>Add item</value>
+  </data>
+  <data name="AddItemTo" xml:space="preserve">
+    <value>Add item to "{0}"</value>
+  </data>
+  <data name="ItemId" xml:space="preserve">
+    <value>Item ID</value>
+  </data>
+  <data name="UniqueIdPlaceholder" xml:space="preserve">
+    <value>Unique identifier</value>
+  </data>
+  <data name="EditItem" xml:space="preserve">
+    <value>Edit item</value>
+  </data>
+  <data name="BlockCount" xml:space="preserve">
+    <value>Block ({0})</value>
+  </data>
+  <data name="UnblockCount" xml:space="preserve">
+    <value>Unblock ({0})</value>
+  </data>
+  <data name="DeleteCount" xml:space="preserve">
+    <value>Delete ({0})</value>
+  </data>
+  <data name="ConcurrencyError" xml:space="preserve">
+    <value>The data was modified by another user. Refresh the page and try again.</value>
+  </data>
+</root>
