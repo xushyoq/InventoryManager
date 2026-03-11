@@ -88,6 +88,24 @@
   <data name="Login" xml:space="preserve">
     <value>Log in</value>
   </data>
+  <data name="LoginPageTitle" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="LoginSubtitle" xml:space="preserve">
+    <value>Choose your preferred sign-in method to access the inventory</value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>Sign in with Google</value>
+  </data>
+  <data name="LoginWithGitHub" xml:space="preserve">
+    <value>Sign in with GitHub</value>
+  </data>
+  <data name="LoginAgreement" xml:space="preserve">
+    <value>By clicking the button, you agree to the terms of service.</value>
+  </data>
   <data name="Avatar" xml:space="preserve">
     <value>Avatar</value>
   </data>

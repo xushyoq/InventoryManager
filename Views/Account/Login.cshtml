@@ -1,8 +1,5 @@
-@*
-    Страница входа: центрированная карточка с кнопками социальных сетей.
-*@
 @{
-    ViewData["Title"] = "Вход в систему";
+    ViewData["Title"] = Localizer["LoginPageTitle"].Value;
 }
 
 <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
@@ -13,8 +10,8 @@
                     <i class="bi bi-shield-lock display-1 text-primary"></i>
                 </div>
                 
-                <h2 class="fw-bold mb-3">Добро пожаловать</h2>
-                <p class="text-muted mb-4">Выберите удобный способ авторизации для доступа к инвентарю</p>
+                <h2 class="fw-bold mb-3">@Localizer["Welcome"]</h2>
+                <p class="text-muted mb-4">@Localizer["LoginSubtitle"]</p>
 
                 <form asp-controller="Account" asp-action="ExternalLogin" method="post" class="mb-2">
                     <input type="hidden" name="provider" value="Google" />
@@ -22,7 +19,7 @@
                             class="btn btn-white border shadow-sm w-100 py-2 d-flex align-items-center justify-content-center rounded-3">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
                              style="width: 18px; margin-right: 12px;" alt="G" />
-                        <span>Войти через Google</span>
+                        <span>@Localizer["LoginWithGoogle"]</span>
                     </button>
                 </form>
 
@@ -31,13 +28,13 @@
                     <button type="submit"
                             class="btn btn-dark border shadow-sm w-100 py-2 d-flex align-items-center justify-content-center rounded-3">
                         <i class="bi bi-github fs-5 me-2"></i>
-                        <span>Войти через GitHub</span>
+                        <span>@Localizer["LoginWithGitHub"]</span>
                     </button>
                 </form>
 
                 <div class="mt-4">
                     <p class="small text-muted">
-                        Нажимая на кнопку, вы соглашаетесь с правилами использования сервиса.
+                        @Localizer["LoginAgreement"]
                     </p>
                 </div>
             </div>

@@ -88,6 +88,24 @@
   <data name="Login" xml:space="preserve">
     <value>Войти</value>
   </data>
+  <data name="LoginPageTitle" xml:space="preserve">
+    <value>Вход в систему</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Добро пожаловать</value>
+  </data>
+  <data name="LoginSubtitle" xml:space="preserve">
+    <value>Выберите удобный способ авторизации для доступа к инвентарю</value>
+  </data>
+  <data name="LoginWithGoogle" xml:space="preserve">
+    <value>Войти через Google</value>
+  </data>
+  <data name="LoginWithGitHub" xml:space="preserve">
+    <value>Войти через GitHub</value>
+  </data>
+  <data name="LoginAgreement" xml:space="preserve">
+    <value>Нажимая на кнопку, вы соглашаетесь с правилами использования сервиса.</value>
+  </data>
   <data name="Avatar" xml:space="preserve">
     <value>Аватар</value>
   </data>
