@@ -194,6 +194,58 @@ public class ItemController : Controller
         return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
     }
 
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> ToggleLike(int itemId)
+    {
+        var item = await _context.Items
+            .Include(i => i.Inventory)
+            .Include(i => i.Likes)
+            .FirstOrDefaultAsync(i => i.Id == itemId);
+
+        if (item == null || item.Inventory == null)
+            return NotFound();
+
+        if (!CanViewInventory(item.Inventory))
+            return Forbid();
+
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString))
+            return Challenge();
+
+        var userId = int.Parse(userIdString);
+        var existingLike = item.Likes.FirstOrDefault(l => l.UserId == userId);
+
+        if (existingLike != null)
+        {
+            _context.Likes.Remove(existingLike);
+        }
+        else
+        {
+            _context.Likes.Add(new Like { ItemId = itemId, UserId = userId });
+        }
+
+        await _context.SaveChangesAsync();
+
+        var count = await _context.Likes.CountAsync(l => l.ItemId == itemId);
+        var liked = existingLike == null;
+
+        return Json(new { liked, count });
+    }
+
+    private bool CanViewInventory(Inventory inventory)
+    {
+        if (inventory.IsPublic) return true;
+
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return false;
+
+        var userId = int.Parse(userIdString);
+        if (inventory.CreatedById == userId) return true;
+        if (User.FindFirstValue("IsAdmin") == "True") return true;
+        return _context.InventoryAccesses.Any(a => a.InventoryId == inventory.Id && a.UserId == userId);
+    }
+
     private bool CanEditInventory(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);

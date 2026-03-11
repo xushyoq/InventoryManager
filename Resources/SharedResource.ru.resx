@@ -160,6 +160,9 @@
   <data name="ItemsCount" xml:space="preserve">
     <value>Предметов</value>
   </data>
+  <data name="Likes" xml:space="preserve">
+    <value>Лайки</value>
+  </data>
   <data name="Average" xml:space="preserve">
     <value>Среднее</value>
   </data>
@@ -381,6 +384,9 @@
   </data>
   <data name="UserEmail" xml:space="preserve">
     <value>Email пользователя</value>
+  </data>
+  <data name="SearchUser" xml:space="preserve">
+    <value>Поиск по имени или email...</value>
   </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>Пользователь не найден</value>

@@ -149,6 +149,26 @@ public class AccountController : Controller
         return View();
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetUserSuggestions(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+        {
+            return Json(Array.Empty<object>());
+        }
+
+        var query = q.Trim().ToLowerInvariant();
+        var users = await _context.Users
+            .Where(u => u.Name.ToLower().Contains(query) || (u.Email != null && u.Email.ToLower().Contains(query)))
+            .OrderBy(u => u.Name)
+            .Take(15)
+            .Select(u => new { id = u.Id, name = u.Name, email = u.Email ?? "" })
+            .ToListAsync();
+
+        return Json(users);
+    }
+
     [HttpGet]
     public IActionResult Blocked()
     {

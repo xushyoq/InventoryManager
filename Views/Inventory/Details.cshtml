@@ -170,11 +170,18 @@
                                         <th>@inventory.CustomLink3Name</th>
                                     }
                                     <th>@Localizer["Created"]</th>
+                                    <th style="width: 80px;">@Localizer["Likes"]</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @{
+                                    var likedItemIds = ViewBag.LikedItemIds as HashSet<int> ?? new HashSet<int>();
+                                    var isAuthenticated = ViewBag.IsAuthenticated as bool? ?? false;
+                                }
                                 @foreach (var item in Model)
                                 {
+                                    var likeCount = item.Likes?.Count ?? 0;
+                                    var userLiked = likedItemIds.Contains(item.Id);
                                     <tr style="cursor: pointer;" data-id="@item.Id"
                                         data-edit-url="@Url.Action("Edit", "Item", new { itemId = item.Id })">
                                         @if (canEdit)
@@ -245,6 +252,25 @@
                                             <td><a href="@item.CustomLink3" target="_blank">@item.CustomLink3</a></td>
                                         }
                                         <td class="text-muted small">@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                        <td onclick="event.stopPropagation()">
+                                            @if (isAuthenticated)
+                                            {
+                                                <button type="button" class="btn btn-sm like-btn p-1 px-2 @(userLiked ? "btn-danger" : "btn-outline-danger")"
+                                                        data-item-id="@item.Id"
+                                                        data-liked="@userLiked.ToString().ToLower()"
+                                                        data-count="@likeCount"
+                                                        title="@Localizer["Likes"]">
+                                                    <i class="bi @(userLiked ? "bi-heart-fill" : "bi-heart")"></i>
+                                                    <span class="like-count">@likeCount</span>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">
+                                                    <i class="bi bi-heart"></i> @likeCount
+                                                </span>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -355,12 +381,12 @@
         <div class="tab-pane fade" id="access">
             @if (canEdit)
             {
-                <form asp-action="GrantAccess" method="post" class="mb-4">
+                <form asp-action="GrantAccess" method="post" class="mb-4" id="grantAccessForm">
                     <input type="hidden" name="inventoryId" value="@inventory.Id" />
                     <div class="row g-2 align-items-end">
                         <div class="col-md-6">
                             <label class="form-label small text-muted">@Localizer["UserEmail"]</label>
-                            <input type="email" name="userEmail" class="form-control" placeholder="user@example.com" required />
+                            <select name="userId" id="userSelect" class="form-select" placeholder="@Localizer["SearchUser"].Value" required></select>
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">@Localizer["GrantAccess"]</button>
@@ -451,59 +477,110 @@
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js" crossorigin="anonymous"></script>
+    @if (canEdit)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const userSelectEl = document.getElementById('userSelect');
+                if (userSelectEl) {
+                    new TomSelect(userSelectEl, {
+                        valueField: 'value',
+                        labelField: 'text',
+                        searchField: ['text'],
+                        load: function (query, callback) {
+                            if (query.length < 2) return callback();
+                            fetch('@Url.Action("GetUserSuggestions", "Account")?q=' + encodeURIComponent(query))
+                                .then(r => r.json())
+                                .then(items => callback(items.map(u => ({ value: u.id.toString(), text: u.name + ' (' + (u.email || '') + ')' }))))
+                                .catch(() => callback());
+                        },
+                        create: false,
+                        maxOptions: 15,
+                        loadThrottle: 300
+                    });
+                }
+            });
+        </script>
+    }
     <script>
-        @if (canEdit)
-            {
-                <text>
-                        document.getElementById('selectAll')?.addEventListener('change', function () {
-                            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
-                        updateToolbar();
-                                                                    });
+        // Активация вкладки по хешу (#access, #discussion и т.д.)
+        (function () {
+            const hash = window.location.hash;
+            if (hash) {
+                const tabEl = document.querySelector('.nav-link[href="' + hash + '"]');
+                if (tabEl) {
+                    const tab = new bootstrap.Tab(tabEl);
+                    tab.show();
+                }
+            }
+        })();
 
-                                                                    document.querySelectorAll('.row-checkbox').forEach(cb => {
-                            cb.addEventListener('change', updateToolbar);
-                                                                    });
+        document.getElementById('selectAll')?.addEventListener('change', function () {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
+            updateToolbar();
+        });
 
-                        function getSelected() {
-                                                                        return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
-                                                                    }
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateToolbar);
+        });
 
-                        function updateToolbar() {
-                                                                        const selected = getSelected();
-                        const count = selected.length;
-                        document.getElementById('btnEdit').disabled = count !== 1;
-                        document.getElementById('btnDelete').disabled = count === 0;
-                                                                        const loc = document.getElementById('locStrings').dataset;
-                                                                        document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
-                                                                    }
-
-                        function editSelected() {
-                                                                        const selected = getSelected();
-                        if (selected.length === 1) {
-                                                                            const row = document.querySelector(`.row-checkbox[value="${selected[0]}"]`).closest('tr');
-                        window.location.href = row.dataset.editUrl;
-                                                                        }
-                                                                    }
-
-                        document.getElementById('deleteModal').addEventListener('show.bs.modal', function () {
-                                                                        const selected = getSelected();
-                        const form = document.getElementById('deleteForm');
-                                                                        form.querySelectorAll('input[name="itemIds"]').forEach(el => el.remove());
-                                                                        selected.forEach(id => {
-                                                                            const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'itemIds';
-                        input.value = id;
-                        form.appendChild(input);
-                                                                        });
-                        const loc = document.getElementById('locStrings').dataset;
-                                                                        const fmt = loc.confirmItems;
-                                                                        const s1 = loc.confirmItemsSuffix1 || '';
-                                                                        const sMany = loc.confirmItemsSuffixMany || '';
-                                                                        document.getElementById('deleteConfirmText').textContent =
-                                                                        fmt.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? s1 : sMany);
-                                                                    });
-                </text>
+        function getSelected() {
+            return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
         }
+
+        function updateToolbar() {
+            const selected = getSelected();
+            const count = selected.length;
+            document.getElementById('btnEdit').disabled = count !== 1;
+            document.getElementById('btnDelete').disabled = count === 0;
+            const loc = document.getElementById('locStrings').dataset;
+            document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
+        }
+
+        function editSelected() {
+            const selected = getSelected();
+            if (selected.length === 1) {
+                const row = document.querySelector(`.row-checkbox[value="${selected[0]}"]`).closest('tr');
+                window.location.href = row.dataset.editUrl;
+            }
+        }
+
+        document.getElementById('deleteModal')?.addEventListener('show.bs.modal', function () {
+            const selected = getSelected();
+            const form = document.getElementById('deleteForm');
+            form.querySelectorAll('input[name="itemIds"]').forEach(el => el.remove());
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'itemIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            const loc = document.getElementById('locStrings').dataset;
+            const fmt = loc.confirmItems;
+            const s1 = loc.confirmItemsSuffix1 || '';
+            const sMany = loc.confirmItemsSuffixMany || '';
+            document.getElementById('deleteConfirmText').textContent =
+                fmt.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? s1 : sMany);
+        });
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', async function (e) {
+                e.preventDefault();
+                const itemId = this.dataset.itemId;
+                const url = '@Url.Action("ToggleLike", "Item")?itemId=' + itemId;
+                try {
+                    const res = await fetch(url, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } });
+                    const data = await res.json();
+                    this.dataset.liked = data.liked.toString();
+                    this.dataset.count = data.count;
+                    this.querySelector('.like-count').textContent = data.count;
+                    this.querySelector('i').className = 'bi ' + (data.liked ? 'bi-heart-fill' : 'bi-heart');
+                    this.classList.toggle('btn-danger', data.liked);
+                    this.classList.toggle('btn-outline-danger', !data.liked);
+                } catch (err) { console.error(err); }
+            });
+        });
     </script>
 }

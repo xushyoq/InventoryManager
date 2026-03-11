@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<InventoryTag> InventoryTags { get; set; } = null!;
     public DbSet<InventoryComment> InventoryComments { get; set; } = null!;
     public DbSet<InventoryAccess> InventoryAccesses { get; set; } = null!;
+    public DbSet<Like> Likes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -110,6 +111,22 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<InventoryAccess>()
             .HasIndex(a => new { a.InventoryId, a.UserId })
+            .IsUnique();
+
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.Item)
+            .WithMany(i => i.Likes)
+            .HasForeignKey(l => l.ItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Like>()
+            .HasIndex(l => new { l.ItemId, l.UserId })
             .IsUnique();
     }
 }

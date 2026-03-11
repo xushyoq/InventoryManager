@@ -240,9 +240,18 @@ public class InventoryController : Controller
         }
 
         var items = await _context.Items
+            .Include(i => i.Likes)
             .Where(i => i.InventoryId == inventoryId)
             .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
+
+        var currentUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var likedItemIds = currentUserIdString != null
+            ? (await _context.Likes
+                .Where(l => l.UserId == int.Parse(currentUserIdString) && items.Select(i => i.Id).Contains(l.ItemId))
+                .Select(l => l.ItemId)
+                .ToListAsync())
+            : new List<int>();
 
         var comments = await _context.InventoryComments
             .Include(c => c.User)
@@ -264,6 +273,8 @@ public class InventoryController : Controller
         ViewBag.Accesses = accesses;
         ViewBag.Statistics = stats;
         ViewBag.CanEdit = inventory != null && CanEditInventory(inventory);
+        ViewBag.LikedItemIds = new HashSet<int>(likedItemIds);
+        ViewBag.IsAuthenticated = User.Identity?.IsAuthenticated == true;
 
         return View(items);
     }
@@ -274,7 +285,7 @@ public class InventoryController : Controller
     {
         if (string.IsNullOrWhiteSpace(text) || text.Length > 2000)
         {
-            return RedirectToAction(nameof(Details), new { inventoryId });
+            return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#discussion");
         }
 
         var inventory = await _context.Inventories.FindAsync(inventoryId);
@@ -293,27 +304,36 @@ public class InventoryController : Controller
         });
         await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Details), new { inventoryId });
+        return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#discussion");
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> GrantAccess(int inventoryId, string userEmail)
+    public async Task<IActionResult> GrantAccess(int inventoryId, int? userId, string? userEmail)
     {
         var inventory = await _context.Inventories.FindAsync(inventoryId);
         if (inventory == null || !CanEditInventory(inventory!)) return Forbid();
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail.Trim());
+        Models.User? user = null;
+        if (userId.HasValue)
+        {
+            user = await _context.Users.FindAsync(userId.Value);
+        }
+        else if (!string.IsNullOrWhiteSpace(userEmail))
+        {
+            user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail.Trim());
+        }
+
         if (user == null)
         {
             TempData["AccessError"] = _localizer["UserNotFound"].Value;
-            return RedirectToAction(nameof(Details), new { inventoryId });
+            return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#access");
         }
 
         if (user.Id == inventory.CreatedById)
         {
             TempData["AccessError"] = _localizer["OwnerHasFullAccess"].Value;
-            return RedirectToAction(nameof(Details), new { inventoryId });
+            return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#access");
         }
 
         if (!await _context.InventoryAccesses.AnyAsync(a => a.InventoryId == inventoryId && a.UserId == user.Id))
@@ -326,7 +346,7 @@ public class InventoryController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Details), new { inventoryId });
+        return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#access");
     }
 
     [Authorize]
@@ -344,7 +364,7 @@ public class InventoryController : Controller
             await _context.SaveChangesAsync();
         }
 
-        return RedirectToAction(nameof(Details), new { inventoryId });
+        return Redirect(Url.Action(nameof(Details), new { inventoryId }) + "#access");
     }
 
     private static InventoryStatistics ComputeStatistics(Inventory inv, List<Item> items)
