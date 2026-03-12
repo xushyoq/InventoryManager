@@ -110,63 +110,63 @@
                                         </th>
                                     }
                                     <th>ID</th>
-                                    @if (inventory.CustomString1State)
+                                    @if (inventory.CustomString1State && inventory.CustomString1ShowInTable)
                                     {
                                         <th>@inventory.CustomString1Name</th>
                                     }
-                                    @if (inventory.CustomString2State)
+                                    @if (inventory.CustomString2State && inventory.CustomString2ShowInTable)
                                     {
                                         <th>@inventory.CustomString2Name</th>
                                     }
-                                    @if (inventory.CustomString3State)
+                                    @if (inventory.CustomString3State && inventory.CustomString3ShowInTable)
                                     {
                                         <th>@inventory.CustomString3Name</th>
                                     }
-                                    @if (inventory.CustomText1State)
+                                    @if (inventory.CustomText1State && inventory.CustomText1ShowInTable)
                                     {
                                         <th>@inventory.CustomText1Name</th>
                                     }
-                                    @if (inventory.CustomText2State)
+                                    @if (inventory.CustomText2State && inventory.CustomText2ShowInTable)
                                     {
                                         <th>@inventory.CustomText2Name</th>
                                     }
-                                    @if (inventory.CustomText3State)
+                                    @if (inventory.CustomText3State && inventory.CustomText3ShowInTable)
                                     {
                                         <th>@inventory.CustomText3Name</th>
                                     }
-                                    @if (inventory.CustomInt1State)
+                                    @if (inventory.CustomInt1State && inventory.CustomInt1ShowInTable)
                                     {
                                         <th>@inventory.CustomInt1Name</th>
                                     }
-                                    @if (inventory.CustomInt2State)
+                                    @if (inventory.CustomInt2State && inventory.CustomInt2ShowInTable)
                                     {
                                         <th>@inventory.CustomInt2Name</th>
                                     }
-                                    @if (inventory.CustomInt3State)
+                                    @if (inventory.CustomInt3State && inventory.CustomInt3ShowInTable)
                                     {
                                         <th>@inventory.CustomInt3Name</th>
                                     }
-                                    @if (inventory.CustomBool1State)
+                                    @if (inventory.CustomBool1State && inventory.CustomBool1ShowInTable)
                                     {
                                         <th>@inventory.CustomBool1Name</th>
                                     }
-                                    @if (inventory.CustomBool2State)
+                                    @if (inventory.CustomBool2State && inventory.CustomBool2ShowInTable)
                                     {
                                         <th>@inventory.CustomBool2Name</th>
                                     }
-                                    @if (inventory.CustomBool3State)
+                                    @if (inventory.CustomBool3State && inventory.CustomBool3ShowInTable)
                                     {
                                         <th>@inventory.CustomBool3Name</th>
                                     }
-                                    @if (inventory.CustomLink1State)
+                                    @if (inventory.CustomLink1State && inventory.CustomLink1ShowInTable)
                                     {
                                         <th>@inventory.CustomLink1Name</th>
                                     }
-                                    @if (inventory.CustomLink2State)
+                                    @if (inventory.CustomLink2State && inventory.CustomLink2ShowInTable)
                                     {
                                         <th>@inventory.CustomLink2Name</th>
                                     }
-                                    @if (inventory.CustomLink3State)
+                                    @if (inventory.CustomLink3State && inventory.CustomLink3ShowInTable)
                                     {
                                         <th>@inventory.CustomLink3Name</th>
                                     }
@@ -193,63 +193,63 @@
                                             </td>
                                         }
                                         <td class="fw-medium">@item.CustomId</td>
-                                        @if (inventory.CustomString1State)
+                                        @if (inventory.CustomString1State && inventory.CustomString1ShowInTable)
                                         {
                                             <td>@item.CustomString1</td>
                                         }
-                                        @if (inventory.CustomString2State)
+                                        @if (inventory.CustomString2State && inventory.CustomString2ShowInTable)
                                         {
                                             <td>@item.CustomString2</td>
                                         }
-                                        @if (inventory.CustomString3State)
+                                        @if (inventory.CustomString3State && inventory.CustomString3ShowInTable)
                                         {
                                             <td>@item.CustomString3</td>
                                         }
-                                        @if (inventory.CustomText1State)
+                                        @if (inventory.CustomText1State && inventory.CustomText1ShowInTable)
                                         {
                                             <td>@item.CustomText1</td>
                                         }
-                                        @if (inventory.CustomText2State)
+                                        @if (inventory.CustomText2State && inventory.CustomText2ShowInTable)
                                         {
                                             <td>@item.CustomText2</td>
                                         }
-                                        @if (inventory.CustomText3State)
+                                        @if (inventory.CustomText3State && inventory.CustomText3ShowInTable)
                                         {
                                             <td>@item.CustomText3</td>
                                         }
-                                        @if (inventory.CustomInt1State)
+                                        @if (inventory.CustomInt1State && inventory.CustomInt1ShowInTable)
                                         {
                                             <td>@item.CustomInt1</td>
                                         }
-                                        @if (inventory.CustomInt2State)
+                                        @if (inventory.CustomInt2State && inventory.CustomInt2ShowInTable)
                                         {
                                             <td>@item.CustomInt2</td>
                                         }
-                                        @if (inventory.CustomInt3State)
+                                        @if (inventory.CustomInt3State && inventory.CustomInt3ShowInTable)
                                         {
                                             <td>@item.CustomInt3</td>
                                         }
-                                        @if (inventory.CustomBool1State)
+                                        @if (inventory.CustomBool1State && inventory.CustomBool1ShowInTable)
                                         {
                                             <td>@(item.CustomBool1 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
-                                        @if (inventory.CustomBool2State)
+                                        @if (inventory.CustomBool2State && inventory.CustomBool2ShowInTable)
                                         {
                                             <td>@(item.CustomBool2 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
-                                        @if (inventory.CustomBool3State)
+                                        @if (inventory.CustomBool3State && inventory.CustomBool3ShowInTable)
                                         {
                                             <td>@(item.CustomBool3 == true ? Localizer["Yes"] : Localizer["No"])</td>
                                         }
-                                        @if (inventory.CustomLink1State)
+                                        @if (inventory.CustomLink1State && inventory.CustomLink1ShowInTable)
                                         {
                                             <td><a href="@item.CustomLink1" target="_blank">@item.CustomLink1</a></td>
                                         }
-                                        @if (inventory.CustomLink2State)
+                                        @if (inventory.CustomLink2State && inventory.CustomLink2ShowInTable)
                                         {
                                             <td><a href="@item.CustomLink2" target="_blank">@item.CustomLink2</a></td>
                                         }
-                                        @if (inventory.CustomLink3State)
+                                        @if (inventory.CustomLink3State && inventory.CustomLink3ShowInTable)
                                         {
                                             <td><a href="@item.CustomLink3" target="_blank">@item.CustomLink3</a></td>
                                         }
