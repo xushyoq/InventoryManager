@@ -15,10 +15,12 @@ namespace InventoryManager.Controllers;
 public class AccountController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AccountController(AppDbContext context)
+    public AccountController(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     [HttpGet]
@@ -90,6 +92,15 @@ public class AccountController : Controller
         if (imageUrl != null && imageUrl != user.ProfileImageUrl)
         {
             user.ProfileImageUrl = imageUrl;
+            await _context.SaveChangesAsync();
+        }
+
+        var adminEmail = _configuration["AdminEmail"];
+        if (!string.IsNullOrEmpty(adminEmail) &&
+            string.Equals(user.Email, adminEmail, StringComparison.OrdinalIgnoreCase) &&
+            !user.IsAdmin)
+        {
+            user.IsAdmin = true;
             await _context.SaveChangesAsync();
         }
 
