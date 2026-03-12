@@ -48,10 +48,9 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="TagsInput" class="form-label fw-medium">@Localizer["Tags"]</label>
-                            <input type="text" name="TagsInput" id="TagsInput" class="form-control"
-                                   value="@(string.Join(", ", Model.InventoryTags.Select(it => it.Tag?.Name ?? "")))"
-                                   placeholder="@Localizer["TagsPlaceholder"]" />
+                            <label for="tagsSelect" class="form-label fw-medium">@Localizer["Tags"]</label>
+                            <input type="hidden" name="TagsInput" id="TagsInput" value="@(string.Join(", ", Model.InventoryTags.Select(it => it.Tag?.Name ?? "")))" />
+                            <select id="tagsSelect" class="form-select" multiple placeholder="@Localizer["TagsPlaceholder"]"></select>
                             <small class="text-muted">@Localizer["TagsInputHint"]</small>
                         </div>
 
@@ -126,7 +125,39 @@
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js" crossorigin="anonymous"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var existingTags = @Html.Raw(Json.Serialize(Model.InventoryTags.Select(it => it.Tag?.Name ?? "").Where(s => !string.IsNullOrEmpty(s)).ToList()));
+            const tagsSelect = new TomSelect('#tagsSelect', {
+                valueField: 'name',
+                labelField: 'name',
+                searchField: ['name'],
+                load: function(query, callback) {
+                    if (query.length < 2) return callback();
+                    fetch('@Url.Action("GetTagSuggestions", "Inventory")?q=' + encodeURIComponent(query))
+                        .then(r => r.json())
+                        .then(items => callback(items))
+                        .catch(() => callback());
+                },
+                create: true,
+                maxOptions: 15,
+                loadThrottle: 300,
+                delimiter: ',',
+                options: existingTags.map(name => ({ name: name })),
+                items: existingTags,
+                onItemAdd: function() {
+                    this.setTextboxValue('');
+                    this.refreshOptions(this.isFocused && this.settings.mode !== 'single');
+                }
+            });
+            document.getElementById('TagsInput').closest('form').addEventListener('submit', function() {
+                document.getElementById('TagsInput').value = tagsSelect.getValue().join(', ');
+            });
+        });
+    </script>
 }

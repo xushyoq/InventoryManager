@@ -95,6 +95,25 @@ public class InventoryController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetTagSuggestions(string? q)
+    {
+        if (string.IsNullOrWhiteSpace(q) || q.Length < 2)
+        {
+            return Json(Array.Empty<object>());
+        }
+
+        var query = q.Trim().ToLowerInvariant();
+        var tags = await _context.Tags
+            .Where(t => t.Name.ToLower().Contains(query))
+            .OrderBy(t => t.Name)
+            .Take(15)
+            .Select(t => new { id = t.Id, name = t.Name })
+            .ToListAsync();
+
+        return Json(tags);
+    }
+
+    [HttpGet]
     public IActionResult Edit(int inventoryId)
     {
 
