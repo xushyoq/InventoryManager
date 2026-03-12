@@ -239,23 +239,9 @@ public class InventoryController : Controller
             return NotFound();
         }
 
-        if (!inventory.IsPublic)
+        if (!inventory.IsPublic && User.Identity?.IsAuthenticated != true)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Challenge();
-            }
-            var userId = int.Parse(userIdString);
-            var isAdmin = User.FindFirstValue("IsAdmin") == "True";
-            var isOwner = inventory.CreatedById == userId;
-            var hasAccess = await _context.InventoryAccesses
-                .AnyAsync(a => a.InventoryId == inventoryId && a.UserId == userId);
-
-            if (!isOwner && !isAdmin && !hasAccess)
-            {
-                return Challenge();
-            }
+            return Challenge();
         }
 
         var items = await _context.Items

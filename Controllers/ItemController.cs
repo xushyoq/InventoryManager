@@ -8,7 +8,6 @@ using Microsoft.Extensions.Localization;
 
 namespace InventoryManager.Controllers;
 
-[Authorize]
 public class ItemController : Controller
 {
     private readonly AppDbContext _context;
@@ -20,6 +19,37 @@ public class ItemController : Controller
         _localizer = localizer;
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Details(int itemId)
+    {
+        var item = await _context.Items
+            .Include(i => i.Inventory)
+            .Include(i => i.Likes)
+            .FirstOrDefaultAsync(i => i.Id == itemId);
+
+        if (item == null || item.Inventory == null)
+            return NotFound();
+
+        var likedItemIds = new HashSet<int>();
+        var currentUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserIdString != null)
+        {
+            var liked = await _context.Likes
+                .Where(l => l.UserId == int.Parse(currentUserIdString) && l.ItemId == itemId)
+                .AnyAsync();
+            if (liked) likedItemIds.Add(itemId);
+        }
+
+        ViewBag.CanEdit = CanEditItems(item.Inventory);
+        ViewBag.LikedItemIds = likedItemIds;
+        ViewBag.IsAuthenticated = User.Identity?.IsAuthenticated == true;
+
+        return View(item);
+    }
+
+    [Authorize]
+    [HttpGet]
     public async Task<IActionResult> Index(int inventoryId)
     {
         var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
@@ -44,6 +74,7 @@ public class ItemController : Controller
         return View(items);
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> Create(int inventoryId)
     {
@@ -64,6 +95,7 @@ public class ItemController : Controller
         return View(inventoryId);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create(Item item, int inventoryId)
     {
@@ -89,6 +121,7 @@ public class ItemController : Controller
 
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> Edit(int itemId)
     {
@@ -117,6 +150,7 @@ public class ItemController : Controller
 
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Edit(Item item)
     {
@@ -159,6 +193,7 @@ public class ItemController : Controller
         return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Delete(int[] itemIds)
     {
@@ -194,6 +229,7 @@ public class ItemController : Controller
         return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
     }
 
+    [Authorize]
     [HttpPost]
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> ToggleLike(int itemId)

@@ -1,0 +1,168 @@
+@model InventoryManager.Models.Item
+@{
+    ViewData["Title"] = Model.CustomId;
+    var inventory = Model.Inventory;
+    var canEdit = ViewBag.CanEdit as bool? ?? false;
+    var likedItemIds = ViewBag.LikedItemIds as HashSet<int> ?? new HashSet<int>();
+    var isAuthenticated = ViewBag.IsAuthenticated as bool? ?? false;
+    var likeCount = Model.Likes?.Count ?? 0;
+    var userLiked = likedItemIds.Contains(Model.Id);
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <a asp-controller="Inventory" asp-action="Details" asp-route-inventoryId="@Model.InventoryId"
+                       class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                    <h2 class="fw-bold mb-0">@Model.CustomId</h2>
+                </div>
+                @if (canEdit)
+                {
+                    <a asp-controller="Item" asp-action="Edit" asp-route-itemId="@Model.Id"
+                       class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-pencil me-1"></i> @Localizer["Edit"]
+                    </a>
+                }
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">@Localizer["ItemId"]</dt>
+                        <dd class="col-sm-8">@Model.CustomId</dd>
+                        @if (inventory != null)
+                        {
+                            @if (inventory.CustomString1State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomString1Name ?? "String1")</dt>
+                                <dd class="col-sm-8">@(Model.CustomString1 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomString2State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomString2Name ?? "String2")</dt>
+                                <dd class="col-sm-8">@(Model.CustomString2 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomString3State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomString3Name ?? "String3")</dt>
+                                <dd class="col-sm-8">@(Model.CustomString3 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomText1State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomText1Name ?? "Text1")</dt>
+                                <dd class="col-sm-8">@(Model.CustomText1 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomText2State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomText2Name ?? "Text2")</dt>
+                                <dd class="col-sm-8">@(Model.CustomText2 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomText3State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomText3Name ?? "Text3")</dt>
+                                <dd class="col-sm-8">@(Model.CustomText3 ?? "—")</dd>
+                            }
+                            @if (inventory.CustomInt1State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomInt1Name ?? "Int1")</dt>
+                                <dd class="col-sm-8">@(Model.CustomInt1?.ToString() ?? "—")</dd>
+                            }
+                            @if (inventory.CustomInt2State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomInt2Name ?? "Int2")</dt>
+                                <dd class="col-sm-8">@(Model.CustomInt2?.ToString() ?? "—")</dd>
+                            }
+                            @if (inventory.CustomInt3State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomInt3Name ?? "Int3")</dt>
+                                <dd class="col-sm-8">@(Model.CustomInt3?.ToString() ?? "—")</dd>
+                            }
+                            @if (inventory.CustomBool1State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomBool1Name ?? "Bool1")</dt>
+                                <dd class="col-sm-8">@(Model.CustomBool1 ? Localizer["Yes"] : Localizer["No"])</dd>
+                            }
+                            @if (inventory.CustomBool2State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomBool2Name ?? "Bool2")</dt>
+                                <dd class="col-sm-8">@(Model.CustomBool2 ? Localizer["Yes"] : Localizer["No"])</dd>
+                            }
+                            @if (inventory.CustomBool3State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomBool3Name ?? "Bool3")</dt>
+                                <dd class="col-sm-8">@(Model.CustomBool3 ? Localizer["Yes"] : Localizer["No"])</dd>
+                            }
+                            @if (inventory.CustomLink1State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomLink1Name ?? "Link1")</dt>
+                                <dd class="col-sm-8">@if (!string.IsNullOrEmpty(Model.CustomLink1)) { <a href="@Model.CustomLink1" target="_blank">@Model.CustomLink1</a> } else { <span>—</span> }</dd>
+                            }
+                            @if (inventory.CustomLink2State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomLink2Name ?? "Link2")</dt>
+                                <dd class="col-sm-8">@if (!string.IsNullOrEmpty(Model.CustomLink2)) { <a href="@Model.CustomLink2" target="_blank">@Model.CustomLink2</a> } else { <span>—</span> }</dd>
+                            }
+                            @if (inventory.CustomLink3State)
+                            {
+                                <dt class="col-sm-4 text-muted">@(inventory.CustomLink3Name ?? "Link3")</dt>
+                                <dd class="col-sm-8">@if (!string.IsNullOrEmpty(Model.CustomLink3)) { <a href="@Model.CustomLink3" target="_blank">@Model.CustomLink3</a> } else { <span>—</span> }</dd>
+                            }
+                        }
+                        <dt class="col-sm-4 text-muted">@Localizer["Created"]</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+                        <dt class="col-sm-4 text-muted">@Localizer["Likes"]</dt>
+                        <dd class="col-sm-8">
+                            @if (isAuthenticated)
+                            {
+                                <button type="button" class="btn btn-sm like-btn p-1 px-2 @(userLiked ? "btn-danger" : "btn-outline-danger")"
+                                        data-item-id="@Model.Id"
+                                        data-liked="@userLiked.ToString().ToLower()"
+                                        data-count="@likeCount"
+                                        title="@Localizer["Likes"]">
+                                    <i class="bi @(userLiked ? "bi-heart-fill" : "bi-heart")"></i>
+                                    <span class="like-count">@likeCount</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    <i class="bi bi-heart"></i> @likeCount
+                                </span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (isAuthenticated)
+    {
+        <script>
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    const itemId = this.dataset.itemId;
+                    const url = '@Url.Action("ToggleLike", "Item")?itemId=' + itemId;
+                    try {
+                        const res = await fetch(url, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } });
+                        const data = await res.json();
+                        this.dataset.liked = data.liked.toString();
+                        this.dataset.count = data.count;
+                        this.querySelector('.like-count').textContent = data.count;
+                        this.querySelector('i').className = 'bi ' + (data.liked ? 'bi-heart-fill' : 'bi-heart');
+                        this.classList.toggle('btn-danger', data.liked);
+                        this.classList.toggle('btn-outline-danger', !data.liked);
+                    } catch (err) { console.error(err); }
+                });
+            });
+        </script>
+    }
+}

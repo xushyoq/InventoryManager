@@ -69,6 +69,7 @@
                         @foreach (var item in Model)
                         {
                             <tr class="item-row" style="cursor: pointer;" data-id="@item.Id"
+                                data-details-url="@Url.Action("Details", "Item", new { itemId = item.Id })"
                                 data-edit-url="@Url.Action("Edit", "Item", new { itemId = item.Id })">
                                 <td onclick="event.stopPropagation()">
                                     <input type="checkbox" class="form-check-input row-checkbox" value="@item.Id" />
@@ -139,8 +140,9 @@
         });
 
         document.querySelectorAll('.item-row').forEach(row => {
-            row.addEventListener('click', function () {
-                window.location.href = this.dataset.editUrl;
+            row.addEventListener('click', function (e) {
+                if (e.target.closest('.row-checkbox')) return;
+                window.location.href = this.dataset.detailsUrl;
             });
         });
 
