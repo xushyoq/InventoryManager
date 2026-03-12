@@ -85,20 +85,20 @@
                                     var descVal = Model.GetType().GetProperty(descProp)?.GetValue(Model)?.ToString();
                                     var showVal = (bool?)Model.GetType().GetProperty(showProp)?.GetValue(Model) == true;
 
-                                    <div class="border rounded p-3 mb-2 bg-light">
+                                    <div class="border rounded p-3 mb-2 bg-light field-config-group">
                                         <div class="d-flex align-items-center gap-3 mb-2">
                                             <div class="form-check form-switch mb-0" title="@Localizer["EnableField"]">
                                                 <input type="checkbox" name="@stateProp" value="true" class="form-check-input custom-field-toggle"
                                                        role="switch" @(isEnabled ? "checked" : "") />
                                                 <input type="hidden" name="@stateProp" value="false" />
                                             </div>
-                                            <input type="text" name="@nameProp" class="form-control form-control-sm"
+                                            <input type="text" name="@nameProp" class="form-control form-control-sm field-config-input @(isEnabled ? "" : "field-config-disabled")"
                                                    placeholder="@string.Format(Localizer["FieldNamePlaceholder"].Value, i)" value="@nameVal" />
                                         </div>
                                         <div class="d-flex align-items-center gap-3">
-                                            <input type="text" name="@descProp" class="form-control form-control-sm"
+                                            <input type="text" name="@descProp" class="form-control form-control-sm field-config-input @(isEnabled ? "" : "field-config-disabled")"
                                                    placeholder="@Localizer["FieldHintPlaceholder"]" value="@descVal" />
-                                            <div class="form-check form-switch mb-0 text-nowrap" title="@Localizer["ShowInTable"]">
+                                            <div class="form-check form-switch mb-0 text-nowrap field-config-input @(isEnabled ? "" : "field-config-disabled")" title="@Localizer["ShowInTable"]">
                                                 <input type="checkbox" name="@showProp" value="true" class="form-check-input"
                                                        role="switch" @(showVal ? "checked" : "") />
                                                 <input type="hidden" name="@showProp" value="false" />
@@ -125,6 +125,9 @@
 </div>
 
 @section Scripts {
+    <style>
+        .field-config-disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+    </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js" crossorigin="anonymous"></script>
     @{
@@ -157,6 +160,14 @@
             });
             document.getElementById('TagsInput').closest('form').addEventListener('submit', function() {
                 document.getElementById('TagsInput').value = tagsSelect.getValue().join(', ');
+            });
+
+            document.querySelectorAll('.custom-field-toggle').forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const block = this.closest('.field-config-group');
+                    const inputs = block.querySelectorAll('.field-config-input');
+                    inputs.forEach(i => this.checked ? i.classList.remove('field-config-disabled') : i.classList.add('field-config-disabled'));
+                });
             });
         });
     </script>
