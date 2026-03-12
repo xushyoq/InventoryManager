@@ -32,6 +32,8 @@ public class HomeController : Controller
         }
 
         var latestInventories = await query
+            .Include(i => i.CreatedBy)
+            .Include(i => i.Items)
             .Include(i => i.InventoryTags)
             .ThenInclude(it => it.Tag)
             .OrderByDescending(i => i.CreatedAt)
@@ -39,6 +41,7 @@ public class HomeController : Controller
             .ToListAsync();
 
         var popularInventories = await query
+            .Include(i => i.CreatedBy)
             .Include(i => i.Items)
             .Include(i => i.InventoryTags)
             .ThenInclude(it => it.Tag)

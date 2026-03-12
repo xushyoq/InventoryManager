@@ -8,7 +8,7 @@
         <div class="col-md-8">
 
             <div class="d-flex align-items-center mb-4">
-                <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
+                            <a href="@(ViewBag.ReturnUrl ?? "javascript:history.back()")" class="btn btn-outline-secondary btn-sm rounded-pill me-3">
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <h2 class="fw-bold mb-0">@Localizer["EditInventory"]</h2>
@@ -19,6 +19,10 @@
                     <form asp-action="Edit" method="post">
                         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
+                        @if (ViewBag.ReturnUrl != null)
+                        {
+                            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        }
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CreatedById" />
                         <input type="hidden" asp-for="CreatedAt" />
@@ -114,7 +118,7 @@
                             <button type="submit" class="btn btn-primary rounded-pill px-4">
                                 <i class="bi bi-check-lg me-1"></i> @Localizer["Save"]
                             </button>
-                            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4">@Localizer["Cancel"]</a>
+                            <a href="@(ViewBag.ReturnUrl ?? "javascript:history.back()")" class="btn btn-outline-secondary rounded-pill px-4">@Localizer["Cancel"]</a>
                         </div>
 
                     </form>

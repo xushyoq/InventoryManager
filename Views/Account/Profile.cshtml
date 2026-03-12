@@ -3,6 +3,8 @@
     ViewData["Title"] = Localizer["Profile"].Value;
     var myInventories = ViewBag.MyInventories as IEnumerable<InventoryManager.Models.Inventory> ?? Enumerable.Empty<InventoryManager.Models.Inventory>();
     var inventoriesWithAccess = ViewBag.InventoriesWithAccess as IEnumerable<InventoryManager.Models.Inventory> ?? Enumerable.Empty<InventoryManager.Models.Inventory>();
+    var allInventories = ViewBag.AllInventories as IEnumerable<InventoryManager.Models.Inventory>;
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
 }
 
 <div class="container py-4">
@@ -29,20 +31,41 @@
                     <thead class="table-light">
                         <tr>
                             <th>@Localizer["Name"]</th>
-                            <th>@Localizer["Category"]</th>
                             <th>@Localizer["Description"]</th>
-                            <th>@Localizer["Created"]</th>
+                            <th>@Localizer["Category"]</th>
+                            <th>@Localizer["Tags"]</th>
                             <th>@Localizer["Access"]</th>
+                            <th>@Localizer["Author"]</th>
+                            <th>@Localizer["Created"]</th>
+                            <th>@Localizer["ItemsCount"]</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var inv in myInventories)
                         {
                             <tr style="cursor: pointer;" onclick="window.location.href='@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })'">
-                                <td class="fw-medium">@inv.Name</td>
-                                <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
+                                <td class="fw-medium"><a href="@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inv.Name</a></td>
                                 <td class="text-muted small">@(inv.Description?.Length > 50 ? inv.Description.Substring(0, 50) + "..." : inv.Description ?? "—")</td>
-                                <td class="text-muted small">@inv.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
+                                <td>
+                                    @if (inv.InventoryTags?.Any() == true)
+                                    {
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach (var it in inv.InventoryTags.Take(3))
+                                            {
+                                                <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                            }
+                                            @if (inv.InventoryTags.Count > 3)
+                                            {
+                                                <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inv.InventoryTags.Count - 3)</span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
                                 <td>
                                     @if (inv.IsPublic)
                                     {
@@ -53,6 +76,9 @@
                                         <span class="badge bg-secondary-subtle text-secondary rounded-pill"><i class="bi bi-lock me-1"></i>@Localizer["Private"]</span>
                                     }
                                 </td>
+                                <td class="text-muted small">@(inv.CreatedBy?.Name ?? "—")</td>
+                                <td class="text-muted small">@inv.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td class="text-muted small">@(inv.Items?.Count ?? 0)</td>
                             </tr>
                         }
                     </tbody>
@@ -61,44 +87,245 @@
         </div>
     }
 
-    <h5 class="fw-semibold mb-3">@Localizer["InventoriesWithAccess"]</h5>
-    @if (!inventoriesWithAccess.Any())
+    @if (isAdmin)
     {
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-5">
-                <i class="bi bi-share display-1 text-muted"></i>
-                <h5 class="text-muted mt-3">@Localizer["NoInventoriesWithAccess"]</h5>
+        <h5 class="fw-semibold mb-3">@Localizer["AllInventories"]</h5>
+        @if (allInventories == null || !allInventories.Any())
+        {
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h5 class="text-muted mt-3">@Localizer["NoInventories"]</h5>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <button type="button" id="btnEdit" class="btn btn-outline-secondary rounded-pill px-4" disabled onclick="editSelected()">
+                    <i class="bi bi-pencil me-1"></i> @Localizer["Edit"]
+                </button>
+                <button type="button" id="btnDelete" class="btn btn-outline-danger rounded-pill px-4" disabled data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash me-1"></i> <span id="deleteLabel">@Localizer["Delete"]</span>
+                </button>
+            </div>
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="selectAll" class="form-check-input" /></th>
+                                <th>@Localizer["Name"]</th>
+                                <th>@Localizer["Description"]</th>
+                                <th>@Localizer["Category"]</th>
+                                <th>@Localizer["Tags"]</th>
+                                <th>@Localizer["Access"]</th>
+                                <th>@Localizer["Author"]</th>
+                                <th>@Localizer["Created"]</th>
+                                <th>@Localizer["ItemsCount"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var inv in allInventories)
+                            {
+                                <tr class="inventory-row" style="cursor: pointer;" data-id="@inv.Id"
+                                    data-details-url="@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })"
+                                    data-edit-url="@Url.Action("Edit", "Inventory", new { inventoryId = inv.Id, returnUrl = Url.Action("Profile", "Account") })">
+                                    <td onclick="event.stopPropagation()"><input type="checkbox" class="form-check-input row-checkbox" value="@inv.Id" /></td>
+                                    <td class="fw-medium"><a href="@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inv.Name</a></td>
+                                    <td class="text-muted small">@(inv.Description?.Length > 50 ? inv.Description.Substring(0, 50) + "..." : inv.Description ?? "—")</td>
+                                    <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
+                                    <td>
+                                        @if (inv.InventoryTags?.Any() == true)
+                                        {
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach (var it in inv.InventoryTags.Take(3))
+                                                {
+                                                    <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                                }
+                                                @if (inv.InventoryTags.Count > 3)
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inv.InventoryTags.Count - 3)</span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (inv.IsPublic)
+                                        {
+                                            <span class="badge bg-success-subtle text-success rounded-pill"><i class="bi bi-globe me-1"></i>@Localizer["Public"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary rounded-pill"><i class="bi bi-lock me-1"></i>@Localizer["Private"]</span>
+                                        }
+                                    </td>
+                                    <td class="text-muted small">@(inv.CreatedBy?.Name ?? "—")</td>
+                                    <td class="text-muted small">@inv.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td class="text-muted small">@(inv.Items?.Count ?? 0)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="locStrings" style="display:none"
+                 data-delete="@Localizer["Delete"].Value"
+                 data-delete-count="@Localizer["DeleteCount"].Value"
+                 data-confirm-inventories="@Localizer["ConfirmDeleteInventories"].Value"
+                 data-confirm-inventories-suffix1="@Localizer["ConfirmDeleteInventoriesSuffix1"].Value"
+                 data-confirm-inventories-suffix-many="@Localizer["ConfirmDeleteInventoriesSuffixMany"].Value"></div>
+            <div class="modal fade" id="deleteModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title fw-bold">@Localizer["ConfirmDelete"]</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="deleteConfirmText" class="text-muted"></p>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
+                            <form asp-controller="Inventory" asp-action="Delete" method="post" id="deleteForm">
+                                <input type="hidden" name="returnUrl" value="@Url.Action("Profile", "Account")" />
+                                <button type="submit" class="btn btn-danger rounded-pill px-4">@Localizer["Delete"]</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     }
     else
     {
-        <div class="card border-0 shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>@Localizer["Name"]</th>
-                            <th>@Localizer["Category"]</th>
-                            <th>@Localizer["Description"]</th>
-                            <th>@Localizer["Author"]</th>
-                            <th>@Localizer["Created"]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var inv in inventoriesWithAccess)
-                        {
-                            <tr style="cursor: pointer;" onclick="window.location.href='@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })'">
-                                <td class="fw-medium">@inv.Name</td>
-                                <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
-                                <td class="text-muted small">@(inv.Description?.Length > 50 ? inv.Description.Substring(0, 50) + "..." : inv.Description ?? "—")</td>
-                                <td class="text-muted small">@(inv.CreatedBy?.Name ?? "—")</td>
-                                <td class="text-muted small">@inv.CreatedAt.ToString("dd.MM.yyyy")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+        <h5 class="fw-semibold mb-3">@Localizer["InventoriesWithAccess"]</h5>
+        @if (!inventoriesWithAccess.Any())
+        {
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-share display-1 text-muted"></i>
+                    <h5 class="text-muted mt-3">@Localizer["NoInventoriesWithAccess"]</h5>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Localizer["Name"]</th>
+                                <th>@Localizer["Description"]</th>
+                                <th>@Localizer["Category"]</th>
+                                <th>@Localizer["Tags"]</th>
+                                <th>@Localizer["Access"]</th>
+                                <th>@Localizer["Author"]</th>
+                                <th>@Localizer["Created"]</th>
+                                <th>@Localizer["ItemsCount"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var inv in inventoriesWithAccess)
+                            {
+                                <tr style="cursor: pointer;" onclick="window.location.href='@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })'">
+                                    <td class="fw-medium"><a href="@Url.Action("Details", "Inventory", new { inventoryId = inv.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inv.Name</a></td>
+                                    <td class="text-muted small">@(inv.Description?.Length > 50 ? inv.Description.Substring(0, 50) + "..." : inv.Description ?? "—")</td>
+                                    <td><span class="badge bg-primary-subtle text-primary rounded-pill">@inv.Category</span></td>
+                                    <td>
+                                        @if (inv.InventoryTags?.Any() == true)
+                                        {
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach (var it in inv.InventoryTags.Take(3))
+                                                {
+                                                    <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                                }
+                                                @if (inv.InventoryTags.Count > 3)
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inv.InventoryTags.Count - 3)</span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (inv.IsPublic)
+                                        {
+                                            <span class="badge bg-success-subtle text-success rounded-pill"><i class="bi bi-globe me-1"></i>@Localizer["Public"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary rounded-pill"><i class="bi bi-lock me-1"></i>@Localizer["Private"]</span>
+                                        }
+                                    </td>
+                                    <td class="text-muted small">@(inv.CreatedBy?.Name ?? "—")</td>
+                                    <td class="text-muted small">@inv.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td class="text-muted small">@(inv.Items?.Count ?? 0)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     }
 </div>
+
+@section Scripts {
+    @if (isAdmin && allInventories != null && allInventories.Any())
+    {
+    <script>
+        document.getElementById('selectAll').addEventListener('change', function () {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = this.checked);
+            updateToolbar();
+        });
+        document.querySelectorAll('.row-checkbox').forEach(cb => cb.addEventListener('change', updateToolbar));
+        document.querySelectorAll('.inventory-row').forEach(row => {
+            row.addEventListener('click', function () {
+                if (!event.target.closest('.row-checkbox')) window.location.href = this.dataset.detailsUrl;
+            });
+        });
+        function getSelected() {
+            return [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.value);
+        }
+        function updateToolbar() {
+            const selected = getSelected();
+            const count = selected.length;
+            document.getElementById('btnEdit').disabled = count !== 1;
+            document.getElementById('btnDelete').disabled = count === 0;
+            const loc = document.getElementById('locStrings').dataset;
+            document.getElementById('deleteLabel').textContent = count > 0 ? loc.deleteCount.replace('{0}', count) : loc.delete;
+        }
+        function editSelected() {
+            const selected = getSelected();
+            if (selected.length === 1) {
+                const row = document.querySelector(`.row-checkbox[value="${selected[0]}"]`).closest('tr');
+                window.location.href = row.dataset.editUrl;
+            }
+        }
+        document.getElementById('deleteModal').addEventListener('show.bs.modal', function () {
+            const selected = getSelected();
+            const form = document.getElementById('deleteForm');
+            form.querySelectorAll('input[name="inventoryIds"]').forEach(el => el.remove());
+            selected.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'inventoryIds';
+                input.value = id;
+                form.appendChild(input);
+            });
+            const loc = document.getElementById('locStrings').dataset;
+            document.getElementById('deleteConfirmText').textContent =
+                loc.confirmInventories.replace('{0}', selected.length).replace('{1}', selected.length === 1 ? loc.confirmInventoriesSuffix1 : loc.confirmInventoriesSuffixMany);
+        });
+    </script>
+    }
+}

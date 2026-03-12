@@ -49,33 +49,54 @@
                                 <input type="checkbox" id="selectAll" class="form-check-input" />
                             </th>
                             <th>@Localizer["Name"]</th>
-                            <th>@Localizer["Category"]</th>
                             <th>@Localizer["Description"]</th>
-                            <th>@Localizer["Created"]</th>
+                            <th>@Localizer["Category"]</th>
+                            <th>@Localizer["Tags"]</th>
                             <th>@Localizer["Access"]</th>
+                            <th>@Localizer["Author"]</th>
+                            <th>@Localizer["Created"]</th>
+                            <th>@Localizer["ItemsCount"]</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var inventory in Model)
                         {
-                            <tr class="inventory-row" style="cursor: pointer;" data-id="@inventory.Id" data-id="@inventory.Id"
+                            <tr class="inventory-row" style="cursor: pointer;" data-id="@inventory.Id"
                                 data-details-url="@Url.Action("Details", new { inventoryId = inventory.Id })"
                                 data-edit-url="@Url.Action("Edit", new { inventoryId = inventory.Id })">
                                 <td onclick="event.stopPropagation()">
                                     <input type="checkbox" class="form-check-input row-checkbox" value="@inventory.Id" />
                                 </td>
-                                <td class="fw-medium">@inventory.Name</td>
-                                <td>
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill">
-                                        @inventory.Category
-                                    </span>
-                                </td>
+                                <td class="fw-medium"><a href="@Url.Action("Details", new { inventoryId = inventory.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inventory.Name</a></td>
                                 <td class="text-muted small">
                                     @(inventory.Description?.Length > 50
                                         ? inventory.Description.Substring(0, 50) + "..."
                                         : inventory.Description ?? "—")
                                 </td>
-                                <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                        @inventory.Category
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (inventory.InventoryTags?.Any() == true)
+                                    {
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach (var it in inventory.InventoryTags.Take(3))
+                                            {
+                                                <span class="badge bg-success-subtle text-success rounded-pill small">@it.Tag?.Name</span>
+                                            }
+                                            @if (inventory.InventoryTags.Count > 3)
+                                            {
+                                                <span class="badge bg-secondary-subtle text-secondary rounded-pill small">+@(inventory.InventoryTags.Count - 3)</span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
                                 <td>
                                     @if (inventory.IsPublic)
                                     {
@@ -90,6 +111,9 @@
                                         </span>
                                     }
                                 </td>
+                                <td class="text-muted small">@(inventory.CreatedBy?.Name ?? "—")</td>
+                                <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td class="text-muted small">@(inventory.Items?.Count ?? 0)</td>
                             </tr>
                         }
                     </tbody>

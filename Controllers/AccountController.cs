@@ -137,23 +137,51 @@ public class AccountController : Controller
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userId = int.Parse(userIdString!);
 
+        var isAdmin = User.FindFirstValue("IsAdmin") == "True";
+
         var myInventories = await _context.Inventories
+            .Include(i => i.CreatedBy)
+            .Include(i => i.Items)
+            .Include(i => i.InventoryTags)
+            .ThenInclude(it => it.Tag)
             .Where(i => i.CreatedById == userId)
             .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
 
-        var invIdsWithAccess = await _context.InventoryAccesses
-            .Where(a => a.UserId == userId)
-            .Select(a => a.InventoryId)
-            .ToListAsync();
-        var inventoriesWithAccess = await _context.Inventories
-            .Include(i => i.CreatedBy)
-            .Where(i => invIdsWithAccess.Contains(i.Id))
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync();
+        List<Models.Inventory> inventoriesWithAccess;
+        List<Models.Inventory>? allInventories = null;
+
+        if (isAdmin)
+        {
+            allInventories = await _context.Inventories
+                .Include(i => i.CreatedBy)
+                .Include(i => i.Items)
+                .Include(i => i.InventoryTags)
+                .ThenInclude(it => it.Tag)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+            inventoriesWithAccess = new List<Models.Inventory>();
+        }
+        else
+        {
+            var invIdsWithAccess = await _context.InventoryAccesses
+                .Where(a => a.UserId == userId)
+                .Select(a => a.InventoryId)
+                .ToListAsync();
+            inventoriesWithAccess = await _context.Inventories
+                .Include(i => i.CreatedBy)
+                .Include(i => i.Items)
+                .Include(i => i.InventoryTags)
+                .ThenInclude(it => it.Tag)
+                .Where(i => invIdsWithAccess.Contains(i.Id))
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+        }
 
         ViewBag.MyInventories = myInventories;
         ViewBag.InventoriesWithAccess = inventoriesWithAccess;
+        ViewBag.AllInventories = allInventories;
+        ViewBag.IsAdmin = isAdmin;
 
         return View();
     }

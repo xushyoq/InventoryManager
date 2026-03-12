@@ -40,6 +40,7 @@
                                     <th>@Localizer["Access"]</th>
                                     <th>@Localizer["Author"]</th>
                                     <th>@Localizer["Created"]</th>
+                                    <th>@Localizer["ItemsCount"]</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,7 +48,7 @@
                                 {
                                     <tr class="inventory-row" style="cursor: pointer;"
                                         data-details-url="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })">
-                                        <td class="fw-medium">@inventory.Name</td>
+                                        <td class="fw-medium"><a href="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inventory.Name</a></td>
                                         <td class="text-muted small">
                                             @(inventory.Description?.Length > 60
                                                 ? inventory.Description.Substring(0, 60) + "..."
@@ -91,8 +92,9 @@
                                                 </span>
                                             }
                                         </td>
-                                        <td class="text-muted small">@inventory.CreatedById</td>
+                                        <td class="text-muted small">@(inventory.CreatedBy?.Name ?? "—")</td>
                                         <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                        <td class="text-muted small">@(inventory.Items?.Count ?? 0)</td>
                                     </tr>
                                 }
                             </tbody>
@@ -125,11 +127,13 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>Название</th>
-                                    <th>Описание</th>
-                                    <th>Категория</th>
-                                    <th>Теги</th>
-                                    <th>Доступ</th>
+                                    <th>@Localizer["Name"]</th>
+                                    <th>@Localizer["Description"]</th>
+                                    <th>@Localizer["Category"]</th>
+                                    <th>@Localizer["Tags"]</th>
+                                    <th>@Localizer["Access"]</th>
+                                    <th>@Localizer["Author"]</th>
+                                    <th>@Localizer["Created"]</th>
                                     <th>@Localizer["ItemsCount"]</th>
                                 </tr>
                             </thead>
@@ -140,7 +144,7 @@
                                     <tr class="inventory-row" style="cursor: pointer;"
                                         data-details-url="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })">
                                         <td class="fw-bold text-muted">@rank</td>
-                                        <td class="fw-medium">@inventory.Name</td>
+                                        <td class="fw-medium"><a href="@Url.Action("Details", "Inventory", new { inventoryId = inventory.Id })" class="text-decoration-none text-dark" onclick="event.stopPropagation();">@inventory.Name</a></td>
                                         <td class="text-muted small">
                                             @(inventory.Description?.Length > 60
                                                 ? inventory.Description.Substring(0, 60) + "..."
@@ -184,11 +188,9 @@
                                                 </span>
                                             }
                                         </td>
-                                        <td>
-                                            <span class="badge bg-success-subtle text-success rounded-pill">
-                                                @inventory.Items.Count
-                                            </span>
-                                        </td>
+                                        <td class="text-muted small">@(inventory.CreatedBy?.Name ?? "—")</td>
+                                        <td class="text-muted small">@inventory.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                        <td class="text-muted small">@inventory.Items.Count</td>
                                     </tr>
                                     rank++;
                                 }

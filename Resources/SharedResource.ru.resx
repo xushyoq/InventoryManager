@@ -124,6 +124,9 @@
   <data name="NoInventoriesWithAccess" xml:space="preserve">
     <value>Нет инвентарей с доступом</value>
   </data>
+  <data name="AllInventories" xml:space="preserve">
+    <value>Все инвентари</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Название</value>
   </data>

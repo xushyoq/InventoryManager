@@ -29,6 +29,10 @@ public class InventoryController : Controller
         var userId = int.Parse(userIdString);
 
         var inventories = await _context.Inventories
+            .Include(i => i.CreatedBy)
+            .Include(i => i.Items)
+            .Include(i => i.InventoryTags)
+            .ThenInclude(it => it.Tag)
             .Where(i => i.CreatedById == userId)
             .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
@@ -114,8 +118,9 @@ public class InventoryController : Controller
     }
 
     [HttpGet]
-    public IActionResult Edit(int inventoryId)
+    public IActionResult Edit(int inventoryId, string? returnUrl)
     {
+        ViewBag.ReturnUrl = returnUrl;
 
         var inventory = _context.Inventories
             .Include(i => i.InventoryTags)
@@ -138,11 +143,12 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(Inventory inventory, string? TagsInput)
+    public async Task<IActionResult> Edit(Inventory inventory, string? TagsInput, string? returnUrl)
     {
         if (!ModelState.IsValid)
         {
             ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
+            ViewBag.ReturnUrl = returnUrl;
             return View(inventory);
         }
 
@@ -203,15 +209,18 @@ public class InventoryController : Controller
         {
             ModelState.AddModelError("", _localizer["ConcurrencyError"].Value);
             ViewBag.Categories = new SelectList(new[] { "Other", "Books", "Electronics", "Clothing" });
+            ViewBag.ReturnUrl = returnUrl;
             return View(inventory);
         }
 
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
         return RedirectToAction(nameof(Index));
 
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete(int[] inventoryIds)
+    public async Task<IActionResult> Delete(int[] inventoryIds, string? returnUrl)
     {
         var inventories = await _context.Inventories
             .Where(i => inventoryIds.Contains(i.Id))
@@ -225,6 +234,8 @@ public class InventoryController : Controller
         _context.Inventories.RemoveRange(inventories);
         await _context.SaveChangesAsync();
 
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return LocalRedirect(returnUrl);
         return RedirectToAction(nameof(Index));
     }
 

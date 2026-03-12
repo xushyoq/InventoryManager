@@ -124,6 +124,9 @@
   <data name="NoInventoriesWithAccess" xml:space="preserve">
     <value>No inventories with access</value>
   </data>
+  <data name="AllInventories" xml:space="preserve">
+    <value>All inventories</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
