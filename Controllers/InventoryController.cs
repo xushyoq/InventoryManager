@@ -272,7 +272,8 @@ public class InventoryController : Controller
         ViewBag.Comments = comments;
         ViewBag.Accesses = accesses;
         ViewBag.Statistics = stats;
-        ViewBag.CanEdit = inventory != null && CanEditInventory(inventory);
+        ViewBag.CanEditInventory = inventory != null && CanEditInventory(inventory);
+        ViewBag.CanEditItems = inventory != null && CanEditItems(inventory);
         ViewBag.LikedItemIds = new HashSet<int>(likedItemIds);
         ViewBag.IsAuthenticated = User.Identity?.IsAuthenticated == true;
 
@@ -427,6 +428,16 @@ public class InventoryController : Controller
     }
 
     private bool CanEditInventory(Inventory inventory)
+    {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return false;
+
+        var userId = int.Parse(userIdString);
+        var isAdmin = User.FindFirstValue("IsAdmin") == "True";
+        return inventory.CreatedById == userId || isAdmin;
+    }
+
+    private bool CanEditItems(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdString)) return false;

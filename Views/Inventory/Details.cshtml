@@ -6,7 +6,8 @@
     var comments = ViewBag.Comments as IEnumerable<InventoryManager.Models.InventoryComment> ?? Enumerable.Empty<InventoryManager.Models.InventoryComment>();
     var accesses = ViewBag.Accesses as IEnumerable<InventoryManager.Models.InventoryAccess> ?? Enumerable.Empty<InventoryManager.Models.InventoryAccess>();
 
-    var canEdit = ViewBag.CanEdit as bool? ?? false;
+    var canEditInventory = ViewBag.CanEditInventory as bool? ?? false;
+    var canEditItems = ViewBag.CanEditItems as bool? ?? false;
 }
 
 <div class="container py-4">
@@ -29,7 +30,7 @@
                 }
             </div>
         </div>
-        @if (canEdit)
+        @if (canEditInventory)
         {
             <a asp-action="Edit" asp-route-inventoryId="@inventory.Id" class="btn btn-outline-primary rounded-pill px-4">
                 <i class="bi bi-pencil me-1"></i> @Localizer["InventorySettings"]
@@ -65,7 +66,7 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="items">
 
-            @if (canEdit)
+            @if (canEditItems)
             {
                 <!-- Тулбар -->
                 <div class="d-flex align-items-center gap-2 mb-3">
@@ -89,7 +90,7 @@
                 <div class="text-center py-5">
                     <i class="bi bi-inbox display-1 text-muted"></i>
                     <h5 class="text-muted mt-3">@Localizer["NoItems"]</h5>
-                    @if (canEdit)
+                    @if (canEditItems)
                     {
                         <p class="text-muted small">@Localizer["ClickAddToStart"]</p>
                     }
@@ -102,7 +103,7 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    @if (canEdit)
+                                    @if (canEditItems)
                                     {
                                         <th style="width: 40px;">
                                             <input type="checkbox" id="selectAll" class="form-check-input" />
@@ -184,7 +185,7 @@
                                     var userLiked = likedItemIds.Contains(item.Id);
                                     <tr style="cursor: pointer;" data-id="@item.Id"
                                         data-edit-url="@Url.Action("Edit", "Item", new { itemId = item.Id })">
-                                        @if (canEdit)
+                                        @if (canEditItems)
                                         {
                                             <td onclick="event.stopPropagation()">
                                                 <input type="checkbox" class="form-check-input row-checkbox" value="@item.Id" />
@@ -379,7 +380,7 @@
 
         <!-- Вкладка Доступ -->
         <div class="tab-pane fade" id="access">
-            @if (canEdit)
+            @if (canEditInventory)
             {
                 <form asp-action="GrantAccess" method="post" class="mb-4" id="grantAccessForm">
                     <input type="hidden" name="inventoryId" value="@inventory.Id" />
@@ -414,7 +415,7 @@
                                 <tr>
                                     <th>@Localizer["Name"]</th>
                                     <th>Email</th>
-                                    @if (canEdit)
+                                    @if (canEditInventory)
                                     {
                                         <th></th>
                                     }
@@ -426,7 +427,7 @@
                                     <tr>
                                         <td class="fw-medium">@(a.User?.Name ?? "—")</td>
                                         <td class="text-muted small">@(a.User?.Email ?? "—")</td>
-                                        @if (canEdit)
+                                        @if (canEditInventory)
                                         {
                                             <td>
                                                 <form asp-action="RevokeAccess" method="post" class="d-inline" onsubmit="return confirm('@Localizer["ConfirmDelete"].Value');">
@@ -479,7 +480,7 @@
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js" crossorigin="anonymous"></script>
-    @if (canEdit)
+    @if (canEditInventory)
     {
         <script>
             document.addEventListener('DOMContentLoaded', function() {

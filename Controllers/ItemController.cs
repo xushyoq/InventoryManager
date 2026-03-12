@@ -29,7 +29,7 @@ public class ItemController : Controller
             return NotFound();
         }
 
-        if (!CanEditInventory(inventory))
+        if (!CanEditItems(inventory))
         {
             return Forbid();
         }
@@ -54,7 +54,7 @@ public class ItemController : Controller
             return NotFound();
         }
 
-        if (!CanEditInventory(inventory))
+        if (!CanEditItems(inventory))
         {
             return Forbid();
         }
@@ -106,7 +106,7 @@ public class ItemController : Controller
             return NotFound();
         }
 
-        if (!CanEditInventory(inventory))
+        if (!CanEditItems(inventory))
         {
             return Forbid();
         }
@@ -133,7 +133,7 @@ public class ItemController : Controller
             return View(item);
         }
 
-        if (!CanEditInventory(inventory))
+        if (!CanEditItems(inventory))
         {
             return Forbid();
         }
@@ -183,7 +183,7 @@ public class ItemController : Controller
             return NotFound();
         }
 
-        if (!CanEditInventory(inventory))
+        if (!CanEditItems(inventory))
         {
             return Forbid();
         }
@@ -246,7 +246,7 @@ public class ItemController : Controller
         return _context.InventoryAccesses.Any(a => a.InventoryId == inventory.Id && a.UserId == userId);
     }
 
-    private bool CanEditInventory(Inventory inventory)
+    private bool CanEditItems(Inventory inventory)
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdString)) return false;
