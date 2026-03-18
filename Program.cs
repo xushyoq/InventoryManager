@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //Repositories
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
