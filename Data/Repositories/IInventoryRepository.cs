@@ -13,4 +13,5 @@ public interface IInventoryRepository
     Task RemoveRangeAsync(IEnumerable<Inventory> inventories, CancellationToken ct = default);
     Task SetTagsAsync(int inventoryId, IEnumerable<int> tags, CancellationToken ct = default);
     Task<bool> ExistsAsync(int id, CancellationToken ct = default);
+    Task UpdateFromFormAsync(Inventory existing, Inventory formModel, CancellationToken ct = default);
 }

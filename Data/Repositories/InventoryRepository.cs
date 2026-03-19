@@ -98,4 +98,12 @@ public class InventoryRepository : IInventoryRepository
         _context.Inventories.Update(inventory);
         await _context.SaveChangesAsync(ct);
     }
+
+    public async Task UpdateFromFormAsync(Inventory existing, Inventory formModel, CancellationToken ct = default)
+    {
+        _context.Entry(existing).CurrentValues.SetValues(formModel);
+        existing.UpdatedAt = DateTime.UtcNow;
+        existing.Version++;
+        await _context.SaveChangesAsync(ct);
+    }
 }
