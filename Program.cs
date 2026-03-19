@@ -22,6 +22,7 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IInventoryCommentRepository, InventoryCommentRepository>();
 builder.Services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
