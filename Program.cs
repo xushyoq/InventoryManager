@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using InventoryManager.Data.Repositories;
 using InventoryManager.Models;
+using InventoryManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IInventoryCommentRepository, InventoryCommentRepository>();
 builder.Services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+
+//Services
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()

@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Localizer["AddItem"].Value;
     var inventory = ViewBag.Inventory as InventoryManager.Models.Inventory;
+    bool hasTemplate = !string.IsNullOrWhiteSpace(inventory?.CustomIdTemplate);
 }
 
 @if (ViewBag.Errors != null)
@@ -25,10 +26,34 @@
                 <div class="card-body p-4">
                     <form asp-controller="Item" asp-action="Create" asp-route-inventoryId="@inventory.Id" method="post">
 
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 mb-3 @(ViewData.ModelState.IsValid ? "d-none" : "")"></div>
+
                         <div class="mb-3">
-                            <label class="form-label fw-medium">@Localizer["ItemId"] <span class="text-danger">*</span></label>
-                            <input name="CustomId" class="form-control" required
-                                   placeholder="@Localizer["UniqueIdPlaceholder"]" />
+                            <label class="form-label fw-medium">
+                                @Localizer["ItemId"]
+                                @if (!hasTemplate) { <span class="text-danger">*</span> }
+                            </label>
+
+                            @if (hasTemplate)
+                            {
+                                <div class="input-group">
+                                    <input name="CustomId" id="customIdInput" class="form-control font-monospace"
+                                           placeholder="@Localizer["CustomIdAutoPlaceholder"]" />
+                                    <button type="button" class="btn btn-outline-secondary" id="btnClearCustomId"
+                                            title="@Localizer["CustomIdClear"]">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    <i class="bi bi-magic me-1"></i>
+                                    @Localizer["CustomIdAutoHint", inventory.CustomIdTemplate!]
+                                </div>
+                            }
+                            else
+                            {
+                                <input name="CustomId" class="form-control" required
+                                       placeholder="@Localizer["UniqueIdPlaceholder"]" />
+                            }
                         </div>
 
                         @* String fields *@
@@ -221,6 +246,15 @@
                         </div>
 
                     </form>
+
+                    @if (hasTemplate)
+                    {
+                        <script>
+                            document.getElementById('btnClearCustomId')?.addEventListener('click', function() {
+                                document.getElementById('customIdInput').value = '';
+                            });
+                        </script>
+                    }
                 </div>
             </div>
 

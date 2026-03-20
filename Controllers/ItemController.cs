@@ -1,6 +1,5 @@
 using System.Security.Claims;
-using InventoryManager.Data;
-using InventoryManager.Models;
+using InventoryManager.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,38 +9,37 @@ namespace InventoryManager.Controllers;
 
 public class ItemController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IItemService _itemService;
     private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public ItemController(AppDbContext context, IStringLocalizer<SharedResource> localizer)
+    public ItemController(IItemService itemService, IStringLocalizer<SharedResource> localizer)
     {
-        _context = context;
+        _itemService = itemService;
         _localizer = localizer;
     }
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> Details(int itemId)
+    public async Task<IActionResult> Details(int itemId, CancellationToken ct)
     {
-        var item = await _context.Items
-            .Include(i => i.Inventory)
-            .Include(i => i.Likes)
-            .FirstOrDefaultAsync(i => i.Id == itemId);
-
+        var item = await _itemService.GetByIdWithInventoryAndLikesAsync(itemId, ct);
         if (item == null || item.Inventory == null)
             return NotFound();
 
-        var likedItemIds = new HashSet<int>();
         var currentUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (currentUserIdString != null)
+        int? currentUserId = currentUserIdString != null ? int.Parse(currentUserIdString) : null;
+
+        if (!await _itemService.CanViewInventoryAsync(item.InventoryId, currentUserId, IsAdmin(), ct))
+            return Forbid();
+
+        var likedItemIds = new HashSet<int>();
+        if (currentUserId.HasValue)
         {
-            var liked = await _context.Likes
-                .Where(l => l.UserId == int.Parse(currentUserIdString) && l.ItemId == itemId)
-                .AnyAsync();
+            var liked = item.Likes.Any(l => l.UserId == currentUserId.Value);
             if (liked) likedItemIds.Add(itemId);
         }
 
-        ViewBag.CanEdit = CanEditItems(item.Inventory);
+        ViewBag.CanEdit = await _itemService.CanEditItemsAsync(item.InventoryId, currentUserId ?? 0, IsAdmin(), ct);
         ViewBag.LikedItemIds = likedItemIds;
         ViewBag.IsAuthenticated = User.Identity?.IsAuthenticated == true;
 
@@ -50,56 +48,51 @@ public class ItemController : Controller
 
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> Index(int inventoryId)
+    public async Task<IActionResult> Index(int inventoryId, CancellationToken ct)
     {
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
+        var currentUserId = GetUserId();
 
-        if (inventory == null)
-        {
-            return NotFound();
-        }
-
-        if (!CanEditItems(inventory))
-        {
+        if (!await _itemService.CanEditItemsAsync(inventoryId, currentUserId, IsAdmin(), ct))
             return Forbid();
-        }
 
-        var items = await _context.Items
-            .Where(i => i.InventoryId == inventoryId)
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync();
+        var inventory = await _itemService.GetInventoryAsync(inventoryId, ct);
+        if (inventory == null)
+            return NotFound();
+
+        var items = await _itemService.GetByInventoryIdAsync(inventoryId, ct);
 
         ViewBag.Inventory = inventory;
-
         return View(items);
     }
 
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> Create(int inventoryId)
+    public async Task<IActionResult> Create(int inventoryId, CancellationToken ct)
     {
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
-
+        var inventory = await _itemService.GetInventoryAsync(inventoryId, ct);
         if (inventory == null)
-        {
             return NotFound();
-        }
 
-        if (!CanEditItems(inventory))
-        {
+        if (!await _itemService.CanEditItemsAsync(inventoryId, GetUserId(), IsAdmin(), ct))
             return Forbid();
-        }
 
         ViewBag.Inventory = inventory;
-
         return View(inventoryId);
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Create(Item item, int inventoryId)
+    public async Task<IActionResult> Create(Models.Item item, int inventoryId, CancellationToken ct)
     {
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
+        var inventory = await _itemService.GetInventoryAsync(inventoryId, ct);
+
+        // If the inventory has a template and the user left CustomId blank,
+        // the service will auto-generate it — clear the Required validation error
+        if (!string.IsNullOrWhiteSpace(inventory?.CustomIdTemplate)
+            && string.IsNullOrWhiteSpace(item.CustomId))
+        {
+            ModelState.Remove(nameof(item.CustomId));
+        }
 
         if (!ModelState.IsValid)
         {
@@ -107,59 +100,44 @@ public class ItemController : Controller
             return View(inventoryId);
         }
 
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var userId = int.Parse(userIdString);
+        try
+        {
+            await _itemService.CreateAsync(item, inventoryId, GetUserId(), ct);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError("", ex.Message);
+            ViewBag.Inventory = inventory;
+            return View(inventoryId);
+        }
 
-        item.CreatedById = userId;
-        item.CreatedAt = DateTime.UtcNow;
-        item.InventoryId = inventoryId;
-
-        _context.Items.Add(item);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index), new { inventoryId = inventoryId });
-
+        return RedirectToAction(nameof(Index), new { inventoryId });
     }
 
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> Edit(int itemId)
+    public async Task<IActionResult> Edit(int itemId, CancellationToken ct)
     {
-        var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
-
+        var item = await _itemService.GetByIdAsync(itemId, ct);
         if (item == null)
-        {
             return NotFound();
-        }
 
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == item.InventoryId);
-
+        var inventory = await _itemService.GetInventoryAsync(item.InventoryId, ct);
         if (inventory == null)
-        {
             return NotFound();
-        }
 
-        if (!CanEditItems(inventory))
-        {
+        if (!await _itemService.CanEditItemsAsync(item.InventoryId, GetUserId(), IsAdmin(), ct))
             return Forbid();
-        }
 
         ViewBag.Inventory = inventory;
-
         return View(item);
-
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Edit(Item item)
+    public async Task<IActionResult> Edit(Models.Item item, CancellationToken ct)
     {
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == item.InventoryId);
-
-        if (inventory == null)
-        {
-            return NotFound();
-        }
+        var inventory = await _itemService.GetInventoryAsync(item.InventoryId, ct);
 
         if (!ModelState.IsValid)
         {
@@ -167,20 +145,17 @@ public class ItemController : Controller
             return View(item);
         }
 
-        if (!CanEditItems(inventory))
+        try
+        {
+            await _itemService.EditAsync(item, GetUserId(), IsAdmin(), ct);
+        }
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-
-        item.CreatedAt = DateTime.SpecifyKind(item.CreatedAt, DateTimeKind.Utc);
-
-        _context.Update(item);
-
-        item.Version++;
-
-        try
+        catch (InvalidOperationException)
         {
-            await _context.SaveChangesAsync();
+            return NotFound();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -189,111 +164,50 @@ public class ItemController : Controller
             return View(item);
         }
 
-
-        return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
+        return RedirectToAction(nameof(Index), new { inventoryId = item.InventoryId });
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Delete(int[] itemIds)
+    public async Task<IActionResult> Delete(int[] itemIds, CancellationToken ct)
     {
-
         if (itemIds == null || itemIds.Length == 0)
-        {
             return BadRequest();
-        }
 
-        var itemsToDelete = await _context.Items.Where(i => itemIds.Contains(i.Id)).ToListAsync();
-
-        if (!itemsToDelete.Any())
+        try
         {
-            return NotFound();
+            var inventoryId = await _itemService.DeleteAsync(itemIds, GetUserId(), IsAdmin(), ct);
+            if (inventoryId == null)
+                return NotFound();
+
+            return RedirectToAction(nameof(Index), new { inventoryId });
         }
-
-        var inventoryId = itemsToDelete.First().InventoryId;
-        var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.Id == inventoryId);
-
-        if (inventory == null)
-        {
-            return NotFound();
-        }
-
-        if (!CanEditItems(inventory))
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-
-        _context.RemoveRange(itemsToDelete);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index), new { inventoryId = inventory.Id });
     }
 
     [Authorize]
     [HttpPost]
     [IgnoreAntiforgeryToken]
-    public async Task<IActionResult> ToggleLike(int itemId)
+    public async Task<IActionResult> ToggleLike(int itemId, CancellationToken ct)
     {
-        var item = await _context.Items
-            .Include(i => i.Inventory)
-            .Include(i => i.Likes)
-            .FirstOrDefaultAsync(i => i.Id == itemId);
-
-        if (item == null || item.Inventory == null)
-            return NotFound();
-
-        if (!CanViewInventory(item.Inventory))
-            return Forbid();
-
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdString))
             return Challenge();
 
-        var userId = int.Parse(userIdString);
-        var existingLike = item.Likes.FirstOrDefault(l => l.UserId == userId);
-
-        if (existingLike != null)
+        try
         {
-            _context.Likes.Remove(existingLike);
+            var (liked, count) = await _itemService.ToggleLikeAsync(itemId, int.Parse(userIdString), ct);
+            return Json(new { liked, count });
         }
-        else
+        catch (InvalidOperationException)
         {
-            _context.Likes.Add(new Like { ItemId = itemId, UserId = userId });
+            return NotFound();
         }
-
-        await _context.SaveChangesAsync();
-
-        var count = await _context.Likes.CountAsync(l => l.ItemId == itemId);
-        var liked = existingLike == null;
-
-        return Json(new { liked, count });
     }
 
-    private bool CanViewInventory(Inventory inventory)
-    {
-        if (inventory.IsPublic) return true;
-
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdString)) return false;
-
-        var userId = int.Parse(userIdString);
-        if (inventory.CreatedById == userId) return true;
-        if (User.FindFirstValue("IsAdmin") == "True") return true;
-        return _context.InventoryAccesses.Any(a => a.InventoryId == inventory.Id && a.UserId == userId);
-    }
-
-    private bool CanEditItems(Inventory inventory)
-    {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdString)) return false;
-
-        var userId = int.Parse(userIdString);
-        var isAdmin = User.FindFirstValue("IsAdmin") == "True";
-        if (inventory.CreatedById == userId || isAdmin) return true;
-
-        return _context.InventoryAccesses
-            .Any(a => a.InventoryId == inventory.Id && a.UserId == userId);
-    }
-
-
+    private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    private bool IsAdmin() => User.FindFirstValue("IsAdmin") == "True";
 }

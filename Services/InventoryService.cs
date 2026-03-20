@@ -1,6 +1,5 @@
 using InventoryManager.Data.Repositories;
 using InventoryManager.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace InventoryManager.Services;
 
@@ -39,7 +38,8 @@ public class InventoryService : IInventoryService
         var created = await _inventoryRepository.AddAsync(inventory, ct);
 
         var tagIds = new List<int>();
-        foreach (var name in tagNames)
+        var names = tagNames ?? Array.Empty<string>();
+        foreach (var name in names)
         {
             var tag = await _tagRepository.GetOrCreateAsync(name, ct);
             tagIds.Add(tag.Id);
@@ -65,7 +65,8 @@ public class InventoryService : IInventoryService
         inventory.CreatedAt = DateTime.SpecifyKind(inventory.CreatedAt, DateTimeKind.Utc);
 
         var tagIds = new List<int>();
-        foreach (var name in tagNames)
+        var names = tagNames ?? Array.Empty<string>();
+        foreach (var name in names)
         {
             var tag = await _tagRepository.GetOrCreateAsync(name, ct);
             tagIds.Add(tag.Id);

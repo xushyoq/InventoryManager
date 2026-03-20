@@ -12,4 +12,8 @@ public interface IItemRepository
     Task UpdateAsync(Item item, CancellationToken ct = default);
     Task RemoveRangeAsync(IEnumerable<Item> items, CancellationToken ct = default);
     Task<bool> ExistsAsync(int id, CancellationToken ct = default);
+    Task<Item?> GetByIdWithInventoryAndLikesAsync(int id, CancellationToken ct = default);
+    Task UpdateFromFormAsync(Item existing, Item formModel, CancellationToken ct = default);
+    Task<IEnumerable<Item>> SearchAsync(string query, IReadOnlyList<int> visibleInventoryIds, CancellationToken ct = default);
+    Task<bool> IsCustomIdTakenAsync(int inventoryId, string customId, int? excludeItemId = null, CancellationToken ct = default);
 }

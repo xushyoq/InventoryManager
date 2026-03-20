@@ -27,6 +27,7 @@
                         <input type="hidden" asp-for="CreatedById" />
                         <input type="hidden" asp-for="CreatedAt" />
                         <input type="hidden" asp-for="Version" />
+                        <input type="hidden" asp-for="CustomIdCounter" />
 
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-medium">@Localizer["Name"]</label>
@@ -56,6 +57,37 @@
                             <input type="hidden" name="TagsInput" id="TagsInput" value="@(string.Join(", ", Model.InventoryTags.Select(it => it.Tag?.Name ?? "")))" />
                             <select id="tagsSelect" class="form-select" multiple placeholder="@Localizer["TagsPlaceholder"]"></select>
                             <small class="text-muted">@Localizer["TagsInputHint"]</small>
+                        </div>
+
+                        <hr />
+                        <h5 class="fw-bold mb-3">@Localizer["CustomItemId"]</h5>
+
+                        <div class="mb-4 p-3 border rounded bg-light">
+                            <div class="mb-2">
+                                <label asp-for="CustomIdTemplate" class="form-label fw-medium">
+                                    @Localizer["CustomIdTemplate"]
+                                </label>
+                                <input asp-for="CustomIdTemplate" class="form-control font-monospace"
+                                       id="customIdTemplateInput"
+                                       placeholder="@Localizer["CustomIdTemplatePlaceholder"]" />
+                                <div class="form-text">
+                                    @Localizer["CustomIdTemplateHint"]
+                                    <br />
+                                    <strong>@Localizer["CustomIdTemplatePlaceholders"]:</strong>
+                                    <code>{YEAR}</code>, <code>{MONTH}</code>, <code>{DAY}</code>, <code>{SEQ}</code>, <code>{SEQ:4}</code>
+                                </div>
+                            </div>
+                            <div id="customIdPreview" class="mt-2 @(string.IsNullOrWhiteSpace(Model.CustomIdTemplate) ? "d-none" : "")">
+                                <span class="text-muted small">@Localizer["CustomIdPreview"]:&nbsp;</span>
+                                <code id="customIdPreviewValue"></code>
+                            </div>
+                            @if (Model.CustomIdCounter > 1)
+                            {
+                                <div class="mt-2 text-muted small">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    @Localizer["CustomIdCounterInfo", Model.CustomIdCounter - 1]
+                                </div>
+                            }
                         </div>
 
                         <hr />
@@ -173,6 +205,39 @@
                     inputs.forEach(i => this.checked ? i.classList.remove('field-config-disabled') : i.classList.add('field-config-disabled'));
                 });
             });
+
+            // Live preview for CustomId template
+            const templateInput = document.getElementById('customIdTemplateInput');
+            const previewBox   = document.getElementById('customIdPreview');
+            const previewValue = document.getElementById('customIdPreviewValue');
+            const counter      = @(Model.CustomIdCounter);
+
+            function generatePreview(template) {
+                if (!template) return '';
+                const now = new Date();
+                const year  = now.getFullYear().toString().padStart(4, '0');
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day   = now.getDate().toString().padStart(2, '0');
+                return template
+                    .replace(/\{YEAR\}/gi,  year)
+                    .replace(/\{MONTH\}/gi, month)
+                    .replace(/\{DAY\}/gi,   day)
+                    .replace(/\{SEQ:(\d+)\}/gi, (_, n) => counter.toString().padStart(parseInt(n), '0'))
+                    .replace(/\{SEQ\}/gi, counter.toString());
+            }
+
+            function updatePreview() {
+                const preview = generatePreview(templateInput.value.trim());
+                if (preview) {
+                    previewValue.textContent = preview;
+                    previewBox.classList.remove('d-none');
+                } else {
+                    previewBox.classList.add('d-none');
+                }
+            }
+
+            templateInput.addEventListener('input', updatePreview);
+            updatePreview();
         });
     </script>
 }

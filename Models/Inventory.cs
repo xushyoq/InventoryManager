@@ -32,6 +32,11 @@ namespace InventoryManager.Models
         [ConcurrencyCheck]
         public int Version { get; set; } = 0;
 
+        [MaxLength(200)]
+        public string? CustomIdTemplate { get; set; }
+
+        public int CustomIdCounter { get; set; } = 1;
+
         public NpgsqlTsVector? SearchVector { get; set; }
 
         // String fields

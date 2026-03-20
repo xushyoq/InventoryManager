@@ -1,78 +1,36 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using InventoryManager.Models;
-using InventoryManager.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
+using InventoryManager.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly AppDbContext _context;
+    private readonly IHomeService _homeService;
 
-    private readonly IStringLocalizer<SharedResource> _localizer;
-
-    public HomeController(ILogger<HomeController> logger, AppDbContext context, IStringLocalizer<SharedResource> localizer)
+    public HomeController(ILogger<HomeController> logger, IHomeService homeService)
     {
         _logger = logger;
-        _context = context;
-        _localizer = localizer;
+        _homeService = homeService;
     }
 
-    public async Task<IActionResult> Index(string? tag)
+    public async Task<IActionResult> Index(string? tag, CancellationToken ct)
     {
-        var query = _context.Inventories.AsQueryable();
+        var data = await _homeService.GetPageDataAsync(tag, ct);
 
-        if (!string.IsNullOrWhiteSpace(tag))
-        {
-            var tagLower = tag.Trim().ToLowerInvariant();
-            query = query.Where(i => i.InventoryTags.Any(it => it.Tag != null && it.Tag.Name.ToLower() == tagLower));
-        }
-
-        var latestInventories = await query
-            .Include(i => i.CreatedBy)
-            .Include(i => i.Items)
-            .Include(i => i.InventoryTags)
-            .ThenInclude(it => it.Tag)
-            .OrderByDescending(i => i.CreatedAt)
-            .Take(10)
-            .ToListAsync();
-
-        var popularInventories = await query
-            .Include(i => i.CreatedBy)
-            .Include(i => i.Items)
-            .Include(i => i.InventoryTags)
-            .ThenInclude(it => it.Tag)
-            .OrderByDescending(i => i.Items.Count())
-            .Take(5)
-            .ToListAsync();
-
-        var tagCloud = (await _context.Tags
-            .Select(t => new { t.Name, Count = t.InventoryTags.Count })
-            .Where(x => x.Count > 0)
-            .OrderByDescending(x => x.Count)
-            .ToListAsync())
-            .Select(x => new TagCloudItem(x.Name, x.Count))
-            .ToList();
-
-        ViewBag.LatestInventories = latestInventories;
-        ViewBag.PopularInventories = popularInventories;
-        ViewBag.TagCloud = tagCloud;
-        ViewBag.SelectedTag = tag?.Trim();
+        ViewBag.LatestInventories = data.LatestInventories;
+        ViewBag.PopularInventories = data.PopularInventories;
+        ViewBag.TagCloud = data.TagCloud;
+        ViewBag.SelectedTag = data.SelectedTag;
 
         return View();
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+    public IActionResult Error() =>
+        View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 }
