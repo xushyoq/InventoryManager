@@ -30,6 +30,7 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<ISupportTicketService, SupportTicketService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
