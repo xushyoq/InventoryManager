@@ -469,4 +469,31 @@
   <data name="English" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="CreateSupportTicket" xml:space="preserve">
+    <value>Create support ticket</value>
+  </data>
+  <data name="SupportTicketSummary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="SupportTicketSummaryPlaceholder" xml:space="preserve">
+    <value>Describe the issue...</value>
+  </data>
+  <data name="SupportTicketPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="SelectPriority" xml:space="preserve">
+    <value>Select priority</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="PriorityAverage" xml:space="preserve">
+    <value>Average</value>
+  </data>
+  <data name="PriorityLow" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
 </root>
