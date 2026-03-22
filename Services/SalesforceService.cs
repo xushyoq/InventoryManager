@@ -84,12 +84,9 @@ public class SalesforceService : ISalesforceService
         var authUrl = _configuration["Salesforce:AuthUrl"];
         var clientId = _configuration["Salesforce:ClientId"];
         var clientSecret = _configuration["Salesforce:ClientSecret"];
-        var username = _configuration["Salesforce:Username"];
-        var password = _configuration["Salesforce:Password"];
 
         if (string.IsNullOrWhiteSpace(authUrl) || string.IsNullOrWhiteSpace(clientId) ||
-            string.IsNullOrWhiteSpace(clientSecret) || string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(password))
+            string.IsNullOrWhiteSpace(clientSecret))
         {
             _logger.LogWarning("Salesforce integration is not configured.");
             return (null, null);
@@ -97,11 +94,9 @@ public class SalesforceService : ISalesforceService
 
         var formData = new FormUrlEncodedContent(new Dictionary<string, string>
         {
-            ["grant_type"] = "password",
+            ["grant_type"] = "client_credentials",
             ["client_id"] = clientId,
-            ["client_secret"] = clientSecret,
-            ["username"] = username,
-            ["password"] = password
+            ["client_secret"] = clientSecret
         });
 
         var response = await _httpClient.PostAsync(authUrl, formData, ct);
