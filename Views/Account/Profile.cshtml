@@ -8,7 +8,12 @@
 }
 
 <div class="container py-4">
-    <h2 class="fw-bold mb-4">@Localizer["Profile"]</h2>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="fw-bold mb-0">@Localizer["Profile"]</h2>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crmModal">
+            <i class="bi bi-person-lines-fill me-1"></i> Add to CRM
+        </button>
+    </div>
 
     <h5 class="fw-semibold mb-3">@Localizer["MyInventories"]</h5>
     @if (!myInventories.Any())
@@ -329,3 +334,86 @@
     </script>
     }
 }
+
+<!-- CRM Modal -->
+<div class="modal fade" id="crmModal" tabindex="-1" aria-labelledby="crmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crmModalLabel"><i class="bi bi-person-lines-fill me-2"></i>Add to CRM</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="crmAlert" class="alert d-none" role="alert"></div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Phone</label>
+                    <input type="tel" id="crmPhone" class="form-control" placeholder="+1 234 567 8900">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Company</label>
+                    <input type="text" id="crmCompany" class="form-control" placeholder="Company name">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Job Title</label>
+                    <input type="text" id="crmJobTitle" class="form-control" placeholder="e.g. Software Engineer">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="crmSubmitBtn" onclick="submitCrm()">
+                    <span id="crmSpinner" class="spinner-border spinner-border-sm d-none me-1" role="status"></span>
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function submitCrm() {
+        const phone = document.getElementById('crmPhone').value.trim();
+        const company = document.getElementById('crmCompany').value.trim();
+        const jobTitle = document.getElementById('crmJobTitle').value.trim();
+        const alertEl = document.getElementById('crmAlert');
+        const spinner = document.getElementById('crmSpinner');
+        const btn = document.getElementById('crmSubmitBtn');
+
+        alertEl.className = 'alert d-none';
+        alertEl.textContent = '';
+
+        if (!company) {
+            alertEl.className = 'alert alert-warning';
+            alertEl.textContent = 'Company name is required.';
+            return;
+        }
+
+        spinner.classList.remove('d-none');
+        btn.disabled = true;
+
+        try {
+            const params = new URLSearchParams({ phone, company, jobTitle });
+            const resp = await fetch('@Url.Action("AddToCrm", "Account")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '' },
+                body: params.toString()
+            });
+            const data = await resp.json();
+            if (data.success) {
+                alertEl.className = 'alert alert-success';
+                alertEl.textContent = 'Successfully added to Salesforce CRM!';
+                document.getElementById('crmPhone').value = '';
+                document.getElementById('crmCompany').value = '';
+                document.getElementById('crmJobTitle').value = '';
+            } else {
+                alertEl.className = 'alert alert-danger';
+                alertEl.textContent = data.error ?? 'Something went wrong.';
+            }
+        } catch (e) {
+            alertEl.className = 'alert alert-danger';
+            alertEl.textContent = 'Network error. Please try again.';
+        } finally {
+            spinner.classList.add('d-none');
+            btn.disabled = false;
+        }
+    }
+</script>

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using InventoryManager.Data.Repositories;
 using InventoryManager.Models;
+using InventoryManager.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,17 +16,20 @@ public class AccountController : Controller
     private readonly IInventoryRepository _inventoryRepository;
     private readonly IInventoryAccessRepository _accessRepository;
     private readonly IConfiguration _configuration;
+    private readonly ISalesforceService _salesforceService;
 
     public AccountController(
         IUserRepository userRepository,
         IInventoryRepository inventoryRepository,
         IInventoryAccessRepository accessRepository,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ISalesforceService salesforceService)
     {
         _userRepository = userRepository;
         _inventoryRepository = inventoryRepository;
         _accessRepository = accessRepository;
         _configuration = configuration;
+        _salesforceService = salesforceService;
     }
 
     [HttpGet]
@@ -152,6 +156,25 @@ public class AccountController : Controller
         ViewBag.IsAdmin = isAdmin;
 
         return View();
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> AddToCrm(string phone, string company, string jobTitle, CancellationToken ct)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var user = await _userRepository.GetByIdAsync(userId, ct);
+        if (user == null)
+            return Json(new { success = false, error = "User not found." });
+
+        var name = user.Name ?? "";
+        var email = user.Email ?? "";
+
+        var ok = await _salesforceService.CreateAccountAndContactAsync(name, email, phone, company, jobTitle, ct);
+        if (!ok)
+            return Json(new { success = false, error = "Failed to create record in Salesforce. Please check configuration." });
+
+        return Json(new { success = true });
     }
 
     [Authorize]
