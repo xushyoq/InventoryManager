@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManager.Controllers;
 
-[Authorize]
 public class SupportTicketController : Controller
 {
     private readonly ISupportTicketService _supportTicketService;
@@ -28,6 +27,7 @@ public class SupportTicketController : Controller
         _itemRepository = itemRepository;
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(string summary, string priority, string? link, CancellationToken ct)
@@ -45,9 +45,17 @@ public class SupportTicketController : Controller
             return RedirectToReferer(link);
         }
 
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var user = await _userRepository.GetByIdAsync(userId, ct);
-        var reportedBy = user != null ? $"{user.Name} ({user.Email})" : User.Identity?.Name ?? "Unknown";
+        string reportedBy;
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var user = await _userRepository.GetByIdAsync(userId, ct);
+            reportedBy = user != null ? $"{user.Name} ({user.Email})" : User.Identity?.Name ?? "Unknown";
+        }
+        else
+        {
+            reportedBy = "Anonymous";
+        }
 
         var admins = (await _userRepository.GetAllAsync(ct))
             .Where(u => u.IsAdmin && !u.IsBlocked && !string.IsNullOrEmpty(u.Email))

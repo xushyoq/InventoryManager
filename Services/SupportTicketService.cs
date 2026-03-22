@@ -31,7 +31,11 @@ public class SupportTicketService : ISupportTicketService
 
         try
         {
-            var json = JsonSerializer.Serialize(ticket, new JsonSerializerOptions { WriteIndented = true });
+            var json = JsonSerializer.Serialize(ticket, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
             var fileName = $"ticket-{DateTime.UtcNow:yyyyMMdd-HHmmss}.json";
             var folderPath = "/SupportTickets";
             var dropboxPath = $"{folderPath}/{fileName}";
