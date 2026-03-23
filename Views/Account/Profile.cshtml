@@ -369,7 +369,27 @@
     </div>
 </div>
 
+<!-- CRM Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div id="crmToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-medium" id="crmToastMsg"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <script>
+    function showCrmToast(message, success) {
+        const toast = document.getElementById('crmToast');
+        const msg = document.getElementById('crmToastMsg');
+        msg.textContent = message;
+        toast.classList.remove('text-bg-success', 'text-bg-danger');
+        toast.classList.add(success ? 'text-bg-success' : 'text-bg-danger');
+        const bsToast = bootstrap.Toast.getOrCreateInstance(toast, { delay: 4000 });
+        bsToast.show();
+    }
+
     async function submitCrm() {
         const phone = document.getElementById('crmPhone').value.trim();
         const company = document.getElementById('crmCompany').value.trim();
@@ -399,16 +419,22 @@
             });
             const data = await resp.json();
             if (data.success) {
-                alertEl.className = 'alert alert-success';
-                alertEl.textContent = 'Successfully added to Salesforce CRM!';
+                bootstrap.Modal.getInstance(document.getElementById('crmModal'))?.hide();
                 document.getElementById('crmPhone').value = '';
                 document.getElementById('crmCompany').value = '';
                 document.getElementById('crmJobTitle').value = '';
+                showCrmToast('Successfully added to Salesforce CRM!', true);
             } else {
+                document.getElementById('crmPhone').value = '';
+                document.getElementById('crmCompany').value = '';
+                document.getElementById('crmJobTitle').value = '';
                 alertEl.className = 'alert alert-danger';
                 alertEl.textContent = data.error ?? 'Something went wrong.';
             }
         } catch (e) {
+            document.getElementById('crmPhone').value = '';
+            document.getElementById('crmCompany').value = '';
+            document.getElementById('crmJobTitle').value = '';
             alertEl.className = 'alert alert-danger';
             alertEl.textContent = 'Network error. Please try again.';
         } finally {
