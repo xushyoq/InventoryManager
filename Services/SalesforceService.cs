@@ -64,9 +64,12 @@ public class SalesforceService : ISalesforceService
             AccountId = accountId
         });
 
-        var contactResponse = await _httpClient.PostAsync(
-            $"{instanceUrl}/services/data/v59.0/sobjects/Contact",
-            new StringContent(contactBody, Encoding.UTF8, "application/json"), ct);
+        var contactRequest = new HttpRequestMessage(HttpMethod.Post, $"{instanceUrl}/services/data/v59.0/sobjects/Contact")
+        {
+            Content = new StringContent(contactBody, Encoding.UTF8, "application/json")
+        };
+        contactRequest.Headers.TryAddWithoutValidation("Sforce-Duplicate-Rule-Header", "allowSave=true");
+        var contactResponse = await _httpClient.SendAsync(contactRequest, ct);
 
         if (!contactResponse.IsSuccessStatusCode)
         {
